@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Bond Lee</title>
+  <subtitle>In god we trust, all others bring data</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://bondlee.github.io/"/>
+  <updated>2016-04-26T02:31:54.180Z</updated>
+  <id>http://bondlee.github.io/</id>
+  
+  <author>
+    <name>Bond Lee</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>用sphinx生成python文档</title>
+    <link href="http://bondlee.github.io/2016/04/24/%E7%94%A8sphinx%E7%94%9F%E6%88%90python%E6%96%87%E6%A1%A3/"/>
+    <id>http://bondlee.github.io/2016/04/24/用sphinx生成python文档/</id>
+    <published>2016-04-24T05:02:46.000Z</published>
+    <updated>2016-04-26T02:31:54.180Z</updated>
+    
+    <content type="html">&lt;h2 id=&quot;Sphinx&quot;&gt;&lt;a href=&quot;#Sphinx&quot; class=&quot;headerlink&quot; title=&quot;Sphinx&quot;&gt;&lt;/a&gt;Sphinx&lt;/h2&gt;&lt;h3 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h3&gt;&lt;p&gt;我们在网上看python的文档的时候会发现很多开源项目都有相应的文档。并且这些文档都是相似的，很整洁。所有这些都是托管在&lt;a href=&quot;https://readthedocs.org/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://readthedocs.org/&lt;/a&gt;上(readthedocs可以连接到github)。&lt;/p&gt;
+&lt;h3 id=&quot;开始&quot;&gt;&lt;a href=&quot;#开始&quot; class=&quot;headerlink&quot; title=&quot;开始&quot;&gt;&lt;/a&gt;开始&lt;/h3&gt;&lt;p&gt;首选运行命令，生成doc工程&lt;br&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;sphinx-quickstart&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;文档根目录(Root path for the documentation)，默认为当前目录(.)&lt;/li&gt;
+&lt;li&gt;是否分离文档源代码与生成后的文档(Separate source and build directories): y&lt;/li&gt;
+&lt;li&gt;模板与静态文件存放目录前缀(Name prefix for templates and static dir):_&lt;/li&gt;
+&lt;li&gt;项目名称(Project name) : EvaEngine&lt;/li&gt;
+&lt;li&gt;作者名称(Author name): Bondlee&lt;/li&gt;
+&lt;li&gt;项目版本(Project version) : 1.0.1&lt;/li&gt;
+&lt;li&gt;文档默认扩展名(Source file suffix) : .rst&lt;/li&gt;
+&lt;li&gt;默认首页文件名(Name of your master document):index&lt;/li&gt;
+&lt;li&gt;是否添加epub目录(Do you want to use the epub builder):n&lt;/li&gt;
+&lt;li&gt;启用autodoc|doctest|intersphinx|todo|coverage|pngmath|ifconfig|viewcode：y&lt;/li&gt;
+&lt;li&gt;生成Makefile (Create Makefile)：y&lt;/li&gt;
+&lt;li&gt;生成windows用命令行(Create Windows command file):y&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;最后会生成Sphinx一个文档项目必需的核心文件，包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Makefile：编译过代码的开发人员应该非常熟悉这个文件，如果不熟悉，那么可以将它看作是一个包含指令的文件，在使用 make 命令时，可以使用这些指令来构建文档输出。&lt;/li&gt;
+&lt;li&gt;_build：这是触发特定输出后用来存放所生成的文件的目录。&lt;/li&gt;
+&lt;li&gt;_static：所有不属于源代码（如图像）一部分的文件均存放于此处，稍后会在构建目录中将它们链接在一起。&lt;/li&gt;
+&lt;li&gt;conf.py：这是一个 Python 文件，用于存放 Sphinx 的配置值，包括在终端执行 sphinx-quickstart 时选中的那些值。&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;index.rst：文档项目的 root 目录。如果将文档划分为其他文件，该目录会连接这些文件。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;readthedocs
+│ make.bat
+│ Makefile
+├─build
+└─source
+  │ conf.py
+  │ index.rst
+  ├─_static
+  └─_templates
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;rst语法&quot;&gt;&lt;a href=&quot;#rst语法&quot; class=&quot;headerlink&quot; title=&quot;rst语法&quot;&gt;&lt;/a&gt;rst语法&lt;/h3&gt;&lt;p&gt;rst与markdown的格式很像，不过功能上比markdown要强大很多。可以输出转换为html、pdf和slides。&lt;br&gt;toctree示例&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Contents:
+
+.. toctree::
+   :maxdepth: 2
+
+   example
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;conf-py&quot;&gt;&lt;a href=&quot;#conf-py&quot; class=&quot;headerlink&quot; title=&quot;conf.py&quot;&gt;&lt;/a&gt;conf.py&lt;/h3&gt;&lt;p&gt;conf.py是用于配置sphinx生成文档时使用的,使用quikstart时的问题就是全部填入cron.py中，若填问题的时候发现了不对的地方，可以在cron.py中自己修改。例如我在automode中填了no，即不会自动抽取代码中的注释生成文档。&lt;/p&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;extensions = [&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;string&quot;&gt;&#39;sphinx.ext.doctest&#39;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;string&quot;&gt;&#39;sphinx.ext.todo&#39;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;string&quot;&gt;&#39;sphinx.ext.coverage&#39;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;string&quot;&gt;&#39;sphinx.ext.pngmath&#39;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;string&quot;&gt;&#39;sphinx.ext.ifconfig&#39;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;       &lt;span class=&quot;string&quot;&gt;&#39;sphinx.ext.viewcode&#39;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   ]&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;则需要在extensions中加入sphinx.ext.autodoc&lt;/p&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;extensions = [&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;string&quot;&gt;&#39;sphinx.ext.doctest&#39;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;string&quot;&gt;&#39;sphinx.ext.todo&#39;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;string&quot;&gt;&#39;sphinx.ext.coverage&#39;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;string&quot;&gt;&#39;sphinx.ext.pngmath&#39;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;string&quot;&gt;&#39;sphinx.ext.ifconfig&#39;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;string&quot;&gt;&#39;sphinx.ext.viewcode&#39;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;string&quot;&gt;&#39;sphinx.ext.autodoc&#39;&lt;/span&gt;,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;]&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;Sphinx-apidoc生成文档&quot;&gt;&lt;a href=&quot;#Sphinx-apidoc生成文档&quot; class=&quot;headerlink&quot; title=&quot;Sphinx-apidoc生成文档&quot;&gt;&lt;/a&gt;Sphinx-apidoc生成文档&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;修改source中的conf.py文件。目的是确保python源代码所在的包在系统路径中可以找到。&lt;br&gt;将&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;#sys.path.insert(0,os.path.abspath(&#39;.&#39;))&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;改为,并去掉注释&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;sys.path.insert(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;,os.path.abspath(&lt;span class=&quot;string&quot;&gt;&#39;..&#39;&lt;/span&gt;))&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;生成rst文件,outputdir是source的目录，packagedir是代码所在的目录&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;sphinx-apidoc -o outputdir packagedir&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;sphinx-apidoc的&lt;a href=&quot;http://www.sphinx-doc.org/en/stable/man/sphinx-apidoc.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;参数&lt;/a&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;-o &lt;outputdir&gt; rst输出文件夹&lt;/outputdir&gt;&lt;/li&gt;
+&lt;li&gt;-f, –force    强制输出，已经生成的rst会被覆盖.&lt;/li&gt;
+&lt;li&gt;-l, –follow-links 符号链接&lt;/li&gt;
+&lt;li&gt;-n, –dry-run    If given, apidoc does not create any files.&lt;/li&gt;
+&lt;li&gt;-s &lt;suffix&gt;    Suffix for the source files generated, default is rst.&lt;/suffix&gt;&lt;/li&gt;
+&lt;li&gt;-d &lt;maxdepth&gt;    Maximum depth for the generated table of contents file.&lt;/maxdepth&gt;&lt;/li&gt;
+&lt;li&gt;-T, –no-toc    Do not create a table of contents file.&lt;/li&gt;
+&lt;li&gt;-F, –full    If given, a full Sphinx project is generated (conf.py, Makefile etc.) using sphinx-quickstart.&lt;/li&gt;
+&lt;li&gt;-e, –separate    Put each module file in its own page.&lt;/li&gt;
+&lt;li&gt;-E, –no-headings  Don’t create headings for the modules/packages&lt;/li&gt;
+&lt;li&gt;-P, –private    &lt;/li&gt;
+&lt;li&gt;-H &lt;project&gt;    Project name to put into the configuration.&lt;/project&gt;&lt;/li&gt;
+&lt;li&gt;-A &lt;author&gt;    Author name(s) to put into the configuration.&lt;/author&gt;&lt;/li&gt;
+&lt;li&gt;-V &lt;version&gt;    工程版本&lt;/version&gt;&lt;/li&gt;
+&lt;li&gt;-R &lt;release&gt;    工程发布版本&lt;/release&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;其中：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;生成rst文件后，就可以生成html文件了。进入到source目录下，运行：&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;sphinx-build -b html sourcedir outputdir&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;会在source目录下生成outputdir文件夹，并且生成的html文件都在outputdir文件夹内。&lt;/p&gt;
+&lt;p&gt;在quik-start中生成的目录，以上命令都可以被make命令替代：&lt;/p&gt;
+&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;make html&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;运行&quot;&gt;&lt;a href=&quot;#运行&quot; class=&quot;headerlink&quot; title=&quot;运行&quot;&gt;&lt;/a&gt;运行&lt;/h3&gt;&lt;p&gt;生成html后就可以使用了。&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;Sphinx&quot;&gt;&lt;a href=&quot;#Sphinx&quot; class=&quot;headerlink&quot; title=&quot;Sphinx&quot;&gt;&lt;/a&gt;Sphinx&lt;/h2&gt;&lt;h3 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;
+    
+    </summary>
+    
+      <category term="default" scheme="http://bondlee.github.io/categories/default/"/>
+    
+    
+      <category term="python" scheme="http://bondlee.github.io/tags/python/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="http://bondlee.github.io/2016/04/24/hello-world/"/>
+    <id>http://bondlee.github.io/2016/04/24/hello-world/</id>
+    <published>2016-04-24T04:45:22.616Z</published>
+    <updated>2016-04-24T04:45:22.634Z</updated>
+    
+    <content type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;documentation&lt;/a&gt; for more info. If you get any problems when using Hexo, you can find the answer in &lt;a href=&quot;https://hexo.io/docs/troubleshooting.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;troubleshooting&lt;/a&gt; or you can ask me on &lt;a href=&quot;https://github.com/hexojs/hexo/issues&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;Quick-Start&quot;&gt;&lt;a href=&quot;#Quick-Start&quot; class=&quot;headerlink&quot; title=&quot;Quick Start&quot;&gt;&lt;/a&gt;Quick Start&lt;/h2&gt;&lt;h3 id=&quot;Create-a-new-post&quot;&gt;&lt;a href=&quot;#Create-a-new-post&quot; class=&quot;headerlink&quot; title=&quot;Create a new post&quot;&gt;&lt;/a&gt;Create a new post&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo new &lt;span class=&quot;string&quot;&gt;&quot;My New Post&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/writing.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Writing&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;Run-server&quot;&gt;&lt;a href=&quot;#Run-server&quot; class=&quot;headerlink&quot; title=&quot;Run server&quot;&gt;&lt;/a&gt;Run server&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo server&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/server.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Server&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;Generate-static-files&quot;&gt;&lt;a href=&quot;#Generate-static-files&quot; class=&quot;headerlink&quot; title=&quot;Generate static files&quot;&gt;&lt;/a&gt;Generate static files&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo generate&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/generating.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Generating&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;Deploy-to-remote-sites&quot;&gt;&lt;a href=&quot;#Deploy-to-remote-sites&quot; class=&quot;headerlink&quot; title=&quot;Deploy to remote sites&quot;&gt;&lt;/a&gt;Deploy to remote sites&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo deploy&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/deployment.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Deployment&lt;/a&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.
+    
+    </summary>
+    
+    
+  </entry>
+  
+</feed>
