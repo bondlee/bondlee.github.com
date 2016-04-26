@@ -3,31 +3,26 @@
 <head>
   <meta charset="utf-8" />
   
-  <title>hexo搭建博客 | Bond Lee</title>
+  <title>git多账号切换 | Bond Lee</title>
   <meta name="author" content="Bond Lee" />
 
   
-  <meta name="description" content="安装环境
-安装node.js http://nodejs.org/download/
-配置Github 略
-安装Hexo
-npm install -g hexo
-hexo init dir
-cd dir
-npm install
+  <meta name="description" content="多个github的账号，不同的账号对应不同的repo，需要push的时候自动区分账号
+
+多个git的账号，对应不同的仓库（github，bitbucket，私有gitla），需要push的时候自动区分账号
 
 
-日常运行
-清理 hexo clean
+多个git账号
+生成ssh key
 
-生成静态页面 hexo ge" />
+先假设我有两个账号，一个是github上的，一个是公" />
   
 
   
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-  <meta property="og:title" content="hexo搭建博客" />
+  <meta property="og:title" content="git多账号切换" />
   <meta property="og:site_name" content="Bond Lee" />
 
   
@@ -78,71 +73,91 @@ npm install
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-04-26T10:28:20.000Z"><a href="/2016/04/26/hexo搭建博客/">2016-04-26</a></time>
+        <time datetime="2016-04-26T10:38:44.000Z"><a href="/2016/04/26/git多账号切换/">2016-04-26</a></time>
       
       
   
-    <h1 class="title">hexo搭建博客</h1>
+    <h1 class="title">git多账号切换</h1>
   
 
     </header>
     <div class="entry">
       
-        <h3 id="安装环境"><a href="#安装环境" class="headerlink" title="安装环境"></a>安装环境</h3><ul>
-<li>安装node.js <a href="http://nodejs.org/download/" target="_blank" rel="external">http://nodejs.org/download/</a></li>
-<li>配置Github 略</li>
-<li><p>安装Hexo</p>
-<pre><code>npm install -g hexo
-hexo init dir
-cd dir
-npm install
-</code></pre></li>
+        <ul>
+<li><p>多个github的账号，不同的账号对应不同的repo，需要push的时候自动区分账号</p>
+</li>
+<li><p>多个git的账号，对应不同的仓库（github，bitbucket，私有gitla），需要push的时候自动区分账号</p>
+</li>
 </ul>
-<h3 id="日常运行"><a href="#日常运行" class="headerlink" title="日常运行"></a>日常运行</h3><ul>
-<li><p>清理 hexo clean</p>
+<h3 id="多个git账号"><a href="#多个git账号" class="headerlink" title="多个git账号"></a>多个git账号</h3><ol>
+<li>生成ssh key</li>
+</ol>
+<p>先假设我有两个账号，一个是github上的，一个是公司gitlab上面的。先为不同的账号生成不同的ssh-key</p>
+<pre><code>（windows 在C:\Users\username\.ssh）
+ssh-keygen -t rsa -f ~/.ssh/id_rsa_gitlab -c xxx@gmail.com
+ssh-keygen -t rsa -f ~/.ssh/id_rsa_github -c xxx@gmail.com
+</code></pre><ol>
+<li><p>把对应得到的id_rsa_github和id_rsa_gitlab.pub，分别把添加到github和gitlab中</p>
 </li>
-<li><p>生成静态页面 hexo generate —&gt; hexo g</p>
-</li>
-<li><p>新建页面 hexo new “postname” —&gt; hexo n</p>
-</li>
-<li><p>启动服务 hexo server —&gt; hexo s</p>
-</li>
-<li><p>部署： hexo deploy —&gt; hexo g —&gt; hexo s -g</p>
-<pre><code>#安装git支持
-npm install hexo-deployer-git --save
+<li><p>编辑~/.ssh/config, 设定不同的git 服务器对应不同的key</p>
+<pre><code># Default github user(first@mail.com),注意User项直接填git，不用填在github的用户名
+Host github.com
+HostName github.com
+User git
+IdentityFile ~/.ssh/id_rsa_github
 
-# _config.yml文件中修改
-deploy:
-  type: github
-  repository: git@github.com:zhchnchn/zhchnchn.github.io.git
-  branch: master
+# second user(second@mail.com)
+# 建一个gitlab别名，新建的帐号使用这个别名做克隆和更新
+Host 10.214.224.201
+HostName 10.214.224.201
+User work
+IdentityFile ~/.ssh/id_rsa_gitlab
 </code></pre></li>
-</ul>
-<h3 id="配置评论"><a href="#配置评论" class="headerlink" title="配置评论"></a>配置评论</h3><p>一般主题中已经自带了多说等评论插件，只要标记自己的duoshuoID即可，例如已经使用了</p>
-<pre><code>duoshuo_shortname: bondlee
+<li><p>检查是否对应： ssh -vT git@github.com</p>
+</li>
+</ol>
+<h4 id="多个github账号"><a href="#多个github账号" class="headerlink" title="多个github账号"></a>多个github账号</h4><p>所有步骤相同，只有步骤3不同，ssh区分账号，其实靠的是HostName这个字段，因此如果在github上有多个账号，很容易的可以把不同的账号映射到不同的HostName上就可以了。比如我有A和B两个账号， 先按照步骤一生成不同的key文件，再修改~/.ssh/config 内容应该是这样的。</p>
+<pre><code># Default github user(A@mail.com),注意User项直接填git，不用填在github的用户名
+Host A.github.com
+ HostName github.com
+ User git
+ IdentityFile ~/.ssh/id_rsa_github_A
 
-fancybox: true
-
-google_analytics:
-</code></pre><h3 id="配置主题"><a href="#配置主题" class="headerlink" title="配置主题"></a>配置主题</h3><p>网上有很多主题可以选择，找到后复制到theme下的文件夹中,再到_config.yml中配置即可：</p>
-<pre><code># Extensions
-## Plugins: https://hexo.io/plugins/
-## Themes: https://hexo.io/themes/
-theme: landfarz
-</code></pre><h3 id="安装rss订阅功能"><a href="#安装rss订阅功能" class="headerlink" title="安装rss订阅功能"></a>安装rss订阅功能</h3><p>首先安装<br>npm install hexo-generator-feed</p>
-<h3 id="向Google-搜索引擎提交站点"><a href="#向Google-搜索引擎提交站点" class="headerlink" title="向Google 搜索引擎提交站点"></a>向Google 搜索引擎提交站点</h3><h4 id="注册并验证"><a href="#注册并验证" class="headerlink" title="注册并验证"></a>注册并验证</h4><p>打开验证：<a href="https://www.google.com/webmasters/verification/home?hl=cn，用Google账户登录" target="_blank" rel="external">https://www.google.com/webmasters/verification/home?hl=cn，用Google账户登录</a><br>添加站点地址，选择验证方法：<br>HTML file upload（HTML文件上传）<br>通用的方法，下载文件，直接放在<em>yourblog/themes/next/source/</em>下并重新生成提交即可。</p>
-<h4 id="提交sitemap"><a href="#提交sitemap" class="headerlink" title="提交sitemap"></a>提交sitemap</h4><p>安装插件生成sitemap<br>npm install hexo-generator-sitemap –save<br>_config.yml<br>sitemap:<br>path: sitemap.xml<br>提交生成的file，可以在浏览器中打开”abc.com/sitemap.xml”看一下</p>
-<h4 id="提交给Google"><a href="#提交给Google" class="headerlink" title="提交给Google"></a>提交给Google</h4><p>打开<a href="https://www.google.com/webmasters/tools/home?hl=zh-CN" target="_blank" rel="external">https://www.google.com/webmasters/tools/home?hl=zh-CN</a><br>Sitemap（站点地图）-&gt;Add-&gt;填写url，提交</p>
-<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><p><a href="http://www.cnblogs.com/zhcncn/p/4097881.html" target="_blank" rel="external">http://www.cnblogs.com/zhcncn/p/4097881.html</a></p>
-<p><a href="https://hexo.io/zh-cn/docs/setup.html" target="_blank" rel="external">https://hexo.io/zh-cn/docs/setup.html</a></p>
-
+# second user(B@mail.com)
+# 建一个gitlab别名，新建的帐号使用这个别名做克隆和更新
+Host A.github.com
+ HostName github.com
+ User git
+ IdentityFile ~/.ssh/id_rsa_github_B
+</code></pre><p>更换提交地址，直接更改 repo/.git/config 里面的url即可</p>
+<pre><code>修改：
+git@github.com:testA/gopkg.git
+为：
+git@A.github.com:testA/gopkg.git
+</code></pre><h4 id="一个repo同时推送到多个不同的仓库"><a href="#一个repo同时推送到多个不同的仓库" class="headerlink" title="一个repo同时推送到多个不同的仓库"></a>一个repo同时推送到多个不同的仓库</h4><p>直接更改 repo/.git/config 里面的url即可，把里面对应tag下的url增加一个就可以了。例:</p>
+<pre><code>[remote &quot;GitHub&quot;]
+url = git@github.com:elliottcable/Paws.o.git
+fetch = +refs/heads/*:refs/remotes/GitHub/*
+[branch &quot;Master&quot;]
+    remote = GitHub
+    merge = refs/heads/Master
+[remote &quot;Codaset&quot;]
+    url = git@codaset.com:elliottcable/paws-o.git
+    fetch = +refs/heads/*:refs/remotes/Codaset/*
+[remote &quot;Paws&quot;]
+    url = git@github.com:Paws/Paws.o.git
+    fetch = +refs/heads/*:refs/remotes/Paws/*
+[remote &quot;Origin&quot;]
+    url = git@github.com:Paws/Paws.o.git # 推送到github
+    url = git@codaset.com:elliottcable/paws-o.git #推送到codaset
+</code></pre>
       
     </div>
     
     <footer>
         <div class="alignright">
           
-          <a href="/2016/04/26/hexo搭建博客/#comment" class="comment-link">评论</a>
+          <a href="/2016/04/26/git多账号切换/#comment" class="comment-link">评论</a>
           
           <a href='javascript:void(0)' class="share-link bdsharebuttonbox" data-cmd="more">分享</a>
         </div>
@@ -150,7 +165,7 @@ theme: landfarz
         
   
   <div class="tags">
-    <a href="/tags/others/">others</a>
+    <a href="/tags/git/">git</a>
   </div>
 
         <!-- partial('post/share') -->
@@ -164,7 +179,7 @@ theme: landfarz
   <h1 class="title">留言</h1>
 
   <!-- 多说评论框 start -->
-  <div class="ds-thread" data-thread-key="[post]-hexo搭建博客" data-title="hexo搭建博客" data-url="http://bondlee.github.io/2016/04/26/hexo搭建博客/"></div>
+  <div class="ds-thread" data-thread-key="[post]-git多账号切换" data-title="git多账号切换" data-url="http://bondlee.github.io/2016/04/26/git多账号切换/"></div>
   <!-- 多说评论框 end -->
   <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
   <script type="text/javascript">

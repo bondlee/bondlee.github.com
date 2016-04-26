@@ -3,31 +3,32 @@
 <head>
   <meta charset="utf-8" />
   
-  <title>hexo搭建博客 | Bond Lee</title>
+  <title>git语法 | Bond Lee</title>
   <meta name="author" content="Bond Lee" />
 
   
-  <meta name="description" content="安装环境
-安装node.js http://nodejs.org/download/
-配置Github 略
-安装Hexo
-npm install -g hexo
-hexo init dir
-cd dir
-npm install
+  <meta name="description" content="init
+init 新建一个git代码库
+git init
+
+新建一个目录，将其初始化为Git代码库
+git init [project-name]
+
+clone一个项目
+git clone url 
 
 
-日常运行
-清理 hexo clean
+add/rm
+git add [file1] [file2] 添加指定文件
 
-生成静态页面 hexo ge" />
+git add " />
   
 
   
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
-  <meta property="og:title" content="hexo搭建博客" />
+  <meta property="og:title" content="git语法" />
   <meta property="og:site_name" content="Bond Lee" />
 
   
@@ -78,63 +79,79 @@ npm install
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-04-26T10:28:20.000Z"><a href="/2016/04/26/hexo搭建博客/">2016-04-26</a></time>
+        <time datetime="2016-04-26T10:38:31.000Z"><a href="/2016/04/26/git语法/">2016-04-26</a></time>
       
       
   
-    <h1 class="title">hexo搭建博客</h1>
+    <h1 class="title">git语法</h1>
   
 
     </header>
     <div class="entry">
       
-        <h3 id="安装环境"><a href="#安装环境" class="headerlink" title="安装环境"></a>安装环境</h3><ul>
-<li>安装node.js <a href="http://nodejs.org/download/" target="_blank" rel="external">http://nodejs.org/download/</a></li>
-<li>配置Github 略</li>
-<li><p>安装Hexo</p>
-<pre><code>npm install -g hexo
-hexo init dir
-cd dir
-npm install
+        <h3 id="init"><a href="#init" class="headerlink" title="init"></a>init</h3><ul>
+<li><p>init 新建一个git代码库</p>
+<pre><code>git init
+</code></pre></li>
+<li><p>新建一个目录，将其初始化为Git代码库</p>
+<pre><code>git init [project-name]
+</code></pre></li>
+<li><p>clone一个项目</p>
+<pre><code>git clone url 
 </code></pre></li>
 </ul>
-<h3 id="日常运行"><a href="#日常运行" class="headerlink" title="日常运行"></a>日常运行</h3><ul>
-<li><p>清理 hexo clean</p>
+<h3 id="add-rm"><a href="#add-rm" class="headerlink" title="add/rm"></a>add/rm</h3><ul>
+<li><p>git add [file1] [file2] 添加指定文件</p>
 </li>
-<li><p>生成静态页面 hexo generate —&gt; hexo g</p>
+<li><p>git add [dir] 添加指定的目录到暂存区，包括子目录</p>
 </li>
-<li><p>新建页面 hexo new “postname” —&gt; hexo n</p>
+<li><p>git rm [file1] [file2] … # 删除工作区文件，并且将这次删除放入暂存区</p>
 </li>
-<li><p>启动服务 hexo server —&gt; hexo s</p>
+<li><p>git rm –cached [file] # 停止追踪指定文件，但该文件会保留在工作区</p>
 </li>
-<li><p>部署： hexo deploy —&gt; hexo g —&gt; hexo s -g</p>
-<pre><code>#安装git支持
-npm install hexo-deployer-git --save
-
-# _config.yml文件中修改
-deploy:
-  type: github
-  repository: git@github.com:zhchnchn/zhchnchn.github.io.git
-  branch: master
-</code></pre></li>
+<li><p>git mv [file-original] [file-renamed] # 改名文件，并且将这个改名放入暂存区</p>
+</li>
 </ul>
-<h3 id="配置评论"><a href="#配置评论" class="headerlink" title="配置评论"></a>配置评论</h3><p>一般主题中已经自带了多说等评论插件，只要标记自己的duoshuoID即可，例如已经使用了</p>
-<pre><code>duoshuo_shortname: bondlee
-
-fancybox: true
-
-google_analytics:
-</code></pre><h3 id="配置主题"><a href="#配置主题" class="headerlink" title="配置主题"></a>配置主题</h3><p>网上有很多主题可以选择，找到后复制到theme下的文件夹中,再到_config.yml中配置即可：</p>
-<pre><code># Extensions
-## Plugins: https://hexo.io/plugins/
-## Themes: https://hexo.io/themes/
-theme: landfarz
-</code></pre><h3 id="安装rss订阅功能"><a href="#安装rss订阅功能" class="headerlink" title="安装rss订阅功能"></a>安装rss订阅功能</h3><p>首先安装<br>npm install hexo-generator-feed</p>
-<h3 id="向Google-搜索引擎提交站点"><a href="#向Google-搜索引擎提交站点" class="headerlink" title="向Google 搜索引擎提交站点"></a>向Google 搜索引擎提交站点</h3><h4 id="注册并验证"><a href="#注册并验证" class="headerlink" title="注册并验证"></a>注册并验证</h4><p>打开验证：<a href="https://www.google.com/webmasters/verification/home?hl=cn，用Google账户登录" target="_blank" rel="external">https://www.google.com/webmasters/verification/home?hl=cn，用Google账户登录</a><br>添加站点地址，选择验证方法：<br>HTML file upload（HTML文件上传）<br>通用的方法，下载文件，直接放在<em>yourblog/themes/next/source/</em>下并重新生成提交即可。</p>
-<h4 id="提交sitemap"><a href="#提交sitemap" class="headerlink" title="提交sitemap"></a>提交sitemap</h4><p>安装插件生成sitemap<br>npm install hexo-generator-sitemap –save<br>_config.yml<br>sitemap:<br>path: sitemap.xml<br>提交生成的file，可以在浏览器中打开”abc.com/sitemap.xml”看一下</p>
-<h4 id="提交给Google"><a href="#提交给Google" class="headerlink" title="提交给Google"></a>提交给Google</h4><p>打开<a href="https://www.google.com/webmasters/tools/home?hl=zh-CN" target="_blank" rel="external">https://www.google.com/webmasters/tools/home?hl=zh-CN</a><br>Sitemap（站点地图）-&gt;Add-&gt;填写url，提交</p>
-<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><p><a href="http://www.cnblogs.com/zhcncn/p/4097881.html" target="_blank" rel="external">http://www.cnblogs.com/zhcncn/p/4097881.html</a></p>
-<p><a href="https://hexo.io/zh-cn/docs/setup.html" target="_blank" rel="external">https://hexo.io/zh-cn/docs/setup.html</a></p>
+<h3 id="commit"><a href="#commit" class="headerlink" title="commit"></a>commit</h3><p>commit用于将文件提交到仓库区</p>
+<ul>
+<li>git commit -m [message] # 提交暂存区到仓库区</li>
+</ul>
+<ul>
+<li><p>git commit [file1] [file2] … -m [message] # 提交暂存区的指定文件到仓库区</p>
+</li>
+<li><p>git commit -a # 提交工作区自上次commit之后的变化，直接到仓库区</p>
+</li>
+<li><p>git commit -v # 提交时显示所有diff信息</p>
+</li>
+<li><p>git commit –amend -m [message] # 使用一次新的commit，替代上一次提交,如果代码没有任何新变化，则用来改写上一次commit的提交信息</p>
+</li>
+</ul>
+<p>$ git commit –amend [file1] [file2] …# 重做上一次commit，并包括指定文件的新变化</p>
+<h3 id="checkout"><a href="#checkout" class="headerlink" title="checkout"></a>checkout</h3><p>checkout用于操作git的Head指针</p>
+<ul>
+<li><p>git checkout [-q] [<commit>] [–] <paths>… 重置的是HEAD，检出的默认值是暂存区。相当于放弃本地修改</paths></commit></p>
+</li>
+<li><p>git checkout [<branch>] 改变head投指针，head将切换到另一个分支</branch></p>
+</li>
+<li><p>git checkout [-m] [[-b]–orphan] <new_branch>] [<start_point>] 创建并切换到新的分支上。</start_point></new_branch></p>
+</li>
+</ul>
+<p>例如：</p>
+<pre><code>git checout -m mywork master
+</code></pre><h3 id="remote"><a href="#remote" class="headerlink" title="remote"></a>remote</h3><ul>
+<li>查看远程</li>
+</ul>
+<h3 id="merge"><a href="#merge" class="headerlink" title="merge"></a>merge</h3><h3 id="rebase"><a href="#rebase" class="headerlink" title="rebase"></a>rebase</h3><p>rebase 意为重新使用基础版本，这个命令实际上对应了非常多的操作，mywork本来是origin 分支C2分出去的，origin有C3，C4有两个版本的内核更新，mywork在分出去后又C5，C6两个版本外观更新，这个时候使用rebase可以先把C5，C6当成补丁暂存，先把内核更新到origin的C4，然后再将C5，C6以补丁的方式更新上来，这样看起来的mywork的更新的图就是下面这样。</p>
+<p>运行gc命令的话，C5，C6的commit就会被删除回收掉。</p>
+<p><img src="http://i.imgur.com/eSKvNIk.png" alt=""></p>
+<p>在rebase的过程中，也许会出现冲突(conflict). 在这种情况，Git会停止rebase并会让你去解决 冲突；在解决完冲突后，用”git-add”命令去更新这些内容的索引(index), 然后，你无需执行 git-commit,只要执行:</p>
+<pre><code>$ git rebase --continue
+</code></pre><p>在任何时候，你可以用–abort参数来终止rebase的行动，并且”mywork” 分支会回到rebase开始前的状态。</p>
+<pre><code>$ git rebase --abort
+</code></pre><h3 id="fetch"><a href="#fetch" class="headerlink" title="fetch"></a>fetch</h3><h3 id="pull"><a href="#pull" class="headerlink" title="pull"></a>pull</h3><h3 id="push"><a href="#push" class="headerlink" title="push"></a>push</h3><h1 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h1><hr>
+<ul>
+<li><a href="http://gitbook.liuhui998.com/4_2.html" target="_blank" rel="external">http://gitbook.liuhui998.com/4_2.html</a></li>
+</ul>
 
       
     </div>
@@ -142,7 +159,7 @@ theme: landfarz
     <footer>
         <div class="alignright">
           
-          <a href="/2016/04/26/hexo搭建博客/#comment" class="comment-link">评论</a>
+          <a href="/2016/04/26/git语法/#comment" class="comment-link">评论</a>
           
           <a href='javascript:void(0)' class="share-link bdsharebuttonbox" data-cmd="more">分享</a>
         </div>
@@ -150,7 +167,7 @@ theme: landfarz
         
   
   <div class="tags">
-    <a href="/tags/others/">others</a>
+    <a href="/tags/git/">git</a>
   </div>
 
         <!-- partial('post/share') -->
@@ -164,7 +181,7 @@ theme: landfarz
   <h1 class="title">留言</h1>
 
   <!-- 多说评论框 start -->
-  <div class="ds-thread" data-thread-key="[post]-hexo搭建博客" data-title="hexo搭建博客" data-url="http://bondlee.github.io/2016/04/26/hexo搭建博客/"></div>
+  <div class="ds-thread" data-thread-key="[post]-git语法" data-title="git语法" data-url="http://bondlee.github.io/2016/04/26/git语法/"></div>
   <!-- 多说评论框 end -->
   <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
   <script type="text/javascript">

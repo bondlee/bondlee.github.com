@@ -1,0 +1,347 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8" />
+  
+  <title>git使用初探 | Bond Lee</title>
+  <meta name="author" content="Bond Lee" />
+
+  
+  <meta name="description" content="CVS及SVN都是集中式的版本控制系统，而Git是分布式版本控制系统，集中式和分布式版本控制系统有什么区别呢？
+
+DVCS 通过本地提交支持离线工作，这是由 DVCS 的操作方式决定的。这与集中式版本控制完全不同.
+
+集中式版本控制要求通过到中心服务器的连接执行所有操作。这种灵活性让开发人员在飞机上" />
+  
+
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <meta property="og:title" content="git使用初探" />
+  <meta property="og:site_name" content="Bond Lee" />
+
+  
+  <meta name="baidu-site-verification" content="yypp158" />
+
+  
+    <meta property="og:image" content="undefined" />
+  
+
+  
+  <link href="/css/images/favicon.ico" rel="icon" />
+  
+
+  <link rel="alternate" href="/atom.xml" title="Bond Lee" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+
+  <!-- baidu webmaster push -->
+  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Bond Lee</a></h1>
+  <h2><a href="/">In god we trust, all others bring data</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">归档</a></li>
+    
+      <li><a href="/atom.xml">订阅</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="[post]">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-04-26T10:38:18.000Z"><a href="/2016/04/26/git使用初探/">2016-04-26</a></time>
+      
+      
+  
+    <h1 class="title">git使用初探</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>CVS及SVN都是集中式的版本控制系统，而Git是分布式版本控制系统，集中式和分布式版本控制系统有什么区别呢？</p>
+<ul>
+<li><p>DVCS 通过本地提交支持离线工作，这是由 DVCS 的操作方式决定的。这与集中式版本控制完全不同.</p>
+</li>
+<li><p>集中式版本控制要求通过到中心服务器的连接执行所有操作。这种灵活性让开发人员在飞机上也能够像在办公室中一样轻松地工作，可以一次又一次地进行提交。</p>
+</li>
+<li><p>在需要进行推（push ）操作（与另一个节点通信）时，速度也更快，因为两个客户机机器上都有完整的元数据。速度差异相当显著，根据使用本地存储库还是网络存储库，DVCS 比Subversion 快大约 3-10 倍。</p>
+</li>
+</ul>
+<h3 id="git-概念"><a href="#git-概念" class="headerlink" title="git 概念"></a>git 概念</h3><p>本地仓库由git维护的三棵树组成：</p>
+<ul>
+<li>工作目录(workset)：持有实际文件</li>
+<li>暂存区（index）： 缓存区域，临时保存你的改动</li>
+<li>Head：指向最后一次提交的结果</li>
+</ul>
+<p><strong>workset</strong> –&gt; add –&gt; <strong>index</strong> –&gt; commit –&gt;<strong>Head</strong></p>
+<h3 id="创建仓库"><a href="#创建仓库" class="headerlink" title="创建仓库"></a>创建仓库</h3><p>运行下面命令，系统会默认为<strong>本地的分支为master</strong>，<strong>远程的分支为origin</strong></p>
+<ul>
+<li><p>创建新仓库，创建新文件夹，打开，然后执行</p>
+<pre><code>git init 
+</code></pre></li>
+<li><p>从本地的git clone一个仓库</p>
+<pre><code>git clone /path/to/repository
+</code></pre></li>
+<li><p>连接远程仓库</p>
+<pre><code>git remote add origin &lt;server&gt;
+</code></pre></li>
+<li><p>clone 远程服务器上的仓库</p>
+<pre><code>git clone username@host:/path/to/repository
+</code></pre></li>
+</ul>
+<h3 id="上传修改-add-commit-push"><a href="#上传修改-add-commit-push" class="headerlink" title="上传修改( add, commit, push)"></a>上传修改( add, commit, push)</h3><ul>
+<li><p>添加到index中</p>
+<pre><code>git add &lt;filename&gt;
+git add *
+</code></pre></li>
+<li><p>更新本地head，使用如下命令以实际提交改动：</p>
+<pre><code>git commit -m &quot;代码提交信息&quot;
+git commit -ma &quot;代码提交，并将发生改动的加入到index中&quot;
+</code></pre></li>
+<li><p>推送改动</p>
+<pre><code>git push origin master # master可以换成我们想要推送的分支
+</code></pre></li>
+</ul>
+<h3 id="更新与合并-pull-merge-checkout-fetch-reset"><a href="#更新与合并-pull-merge-checkout-fetch-reset" class="headerlink" title="更新与合并( pull, merge, checkout, fetch, reset)"></a>更新与合并( pull, merge, checkout, fetch, reset)</h3><ul>
+<li><p>要更新本地仓库至最新改动，执行：</p>
+<pre><code>git pull
+</code></pre></li>
+<li><p>该命令将获取并合并远端的改动，要合并其他分支到我们的分支，执行：</p>
+<pre><code>git merge &lt;branch&gt;
+</code></pre></li>
+<li><p>放弃本地改动，取用服务器上的版本</p>
+<pre><code>git checkout -- &lt;filename&gt;
+</code></pre></li>
+</ul>
+<p>此命令会使用HEAD中的最新内容替换掉你的工作目录中的文件，已添加到暂存区的改动以及新文件都不会受到影响</p>
+<p>例如：在hello.py所在的文件夹下执行，即可</p>
+<pre><code>git checkout -- hello.py
+</code></pre><ul>
+<li><p>如果想丢弃在本地的所有改动与提交，可以到服务器上获取最新的版本历史，并将本地分支指向它</p>
+<p>  git fetch origin</p>
+<p>  git reset –hard origin/master</p>
+</li>
+</ul>
+<p>也可以使用stash命令，放弃所有修：</p>
+<pre><code>git stash drop
+</code></pre><h3 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h3><p>分支是用来将特性开发绝缘开来的，在创建仓库的时候，master是默认的分支，在其他分支上进行开发，完成后在将它们合并到主分支上。</p>
+<ul>
+<li><p>切换分支：</p>
+<pre><code>git checkout -b feature_x # 创建一个叫做”feature_x“的分支，并切换过去：
+</code></pre></li>
+<li><p>切换回主分支：</p>
+<pre><code>git checkout master
+</code></pre></li>
+<li><p>删除分支</p>
+<pre><code>git branch -d feature_x
+</code></pre></li>
+<li><p>推送分支</p>
+<pre><code>git push origin &lt;branch&gt;
+</code></pre></li>
+</ul>
+<h3 id="合并分支"><a href="#合并分支" class="headerlink" title="合并分支"></a>合并分支</h3><p>场景：<strong>origin</strong>为公司代码的主干版本，而我们团队负责为某个项目特别优化的一个分支版本，但是定期我们需要合并主干版本的重要更新，并且在关键节点上要发布产品。</p>
+<p>假设我们现在基于远程分支“origin”创建一个叫“mywork”的分支，origin之前已经有两个提交了：</p>
+<pre><code>git checkout -b mywork origin
+</code></pre><p>然后origin有两个更新C3，C4， mywork有两个更新C5，C6</p>
+<h4 id="merge"><a href="#merge" class="headerlink" title="merge"></a>merge</h4><p>git 进行merge的结果比较容易理解，若执行命令</p>
+<pre><code>git checkout mywork
+git mrege origin
+</code></pre><p>则会将origin中的修改合并到mywork分支中.</p>
+<p><img src="http://i.imgur.com/nGk6RHt.png" alt=""></p>
+<h5 id="冲突解决"><a href="#冲突解决" class="headerlink" title="冲突解决"></a>冲突解决</h5><p>有时候合并操作并不会如此顺利。如果在不同的分支中都修改了同一个文件的同一部分，Git 就无法干净地把两者合到一起。此时合并会中止，发生冲突的文件会以<strong>unmerged</strong>状态标识出来。</p>
+<pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+&lt;div id=&quot;footer&quot;&gt;contact : email.support@github.com&lt;/div&gt;
+=======
+&lt;div id=&quot;footer&quot;&gt;
+  please contact us at support@github.com
+&lt;/div&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; iss53
+</code></pre><p>可以看到 ======= 隔开的上半部分，是 HEAD（即 master 分支，在运行 merge 命令时所切换到的分支）中的内容，下半部分是在 iss53 分支中的内容。解决冲突的办法无非是二者选其一或者由你亲自整合到一起。比如你可以通过把这段内容替换为下面这样来解决：</p>
+<pre><code>&lt;div id=&quot;footer&quot;&gt;
+    please contact us at email.support@github.com
+&lt;/div&gt;
+</code></pre><p>运行 git add 将把它们标记为已解决状态</p>
+<pre><code>git add file
+</code></pre><p>如果你想用一个有图形界面的工具来解决这些问题，不妨运行 git mergetool，它会调用一个可视化的合并工具并引导你解决所有冲突，退出合并工具以后，Git 会询问你合并是否成功。如果回答是，它会为你把相关文件暂存起来，以表明状态为已解决。</p>
+<p>就可以用 git commit 来完成这次合并提交。提交的记录差不多是这样：</p>
+<pre><code>git commit
+</code></pre><p>更复杂的合并，可以参考 <a href="https://git-scm.com/book/zh/v1/Git-%E5%88%86%E6%94%AF-%E5%88%86%E6%94%AF%E7%9A%84%E6%96%B0%E5%BB%BA%E4%B8%8E%E5%90%88%E5%B9%B6" target="_blank" rel="external">分支合并</a></p>
+<h4 id="rebase"><a href="#rebase" class="headerlink" title="rebase"></a>rebase</h4><p>rebase 意为重新使用基础版本，这个命令实际上对应了非常多的操作，mywork本来是origin 分支C2分出去的，origin有C3，C4有两个版本的内核更新，mywork在分出去后又C5，C6两个版本外观更新，这个时候使用rebase可以先把C5，C6当成补丁暂存，先把内核更新到origin的C4，然后再将C5，C6以补丁的方式更新上来，这样看起来的mywork的更新的图就是下面这样。</p>
+<p>运行gc命令的话，C5，C6的commit就会被删除回收掉。</p>
+<p><img src="http://i.imgur.com/eSKvNIk.png" alt=""></p>
+<p>在rebase的过程中，也许会出现冲突(conflict). 在这种情况，Git会停止rebase并会让你去解决 冲突；在解决完冲突后，用”git-add”命令去更新这些内容的索引(index), 然后，你无需执行 git-commit,只要执行:</p>
+<pre><code>$ git rebase --continue
+</code></pre><p>在任何时候，你可以用–abort参数来终止rebase的行动，并且”mywork” 分支会回到rebase开始前的状态。</p>
+<pre><code>$ git rebase --abort
+</code></pre><h3 id="git-rebase和git-merge的区别："><a href="#git-rebase和git-merge的区别：" class="headerlink" title="git rebase和git merge的区别："></a>git rebase和git merge的区别：</h3><p>当我们使用Git log来参看commit时，其commit的顺序也有所不同。<br>假设C3提交于9:00AM,C5提交于10:00AM,C4提交于11:00AM，C6提交于12:00AM,<br>对于使用git merge来合并所看到的commit的顺序（从新到旧）是：C7 ,C6,C4,C5,C3,C2,C1(严格按照时间顺序排列)<br>对于使用git rebase来合并所看到的commit的顺序（从新到旧）是：C7 ,C6‘,C5’,C4,C3,C2,C1<br> 因为C6’提交只是C6提交的克隆，C5’提交只是C5提交的克隆，<br>从用户的角度看使用git rebase来合并后所看到的commit的顺序（从新到旧）是：C7 ,C6,C5,C4,C3,C2,C1</p>
+<h3 id="标签（TODO）"><a href="#标签（TODO）" class="headerlink" title="标签（TODO）"></a>标签（TODO）</h3><p>为软件发布创建标签是推荐的，这个概念早已存在，在SVN中就有有，可以执行如下命令创建一个叫做1.0.0的标签：</p>
+<pre><code>git tag 1.0.0 1b2e1d63ff
+</code></pre><p>1b231d63ff是我们想要标记的提交ID的前10位字符，可以使用如下命令获取提交ID：</p>
+<pre><code>git log
+</code></pre><p>也可以使用少一点的提交ID前几位，只要它的指向具有唯一性。</p>
+
+      
+    </div>
+    
+    <footer>
+        <div class="alignright">
+          
+          <a href="/2016/04/26/git使用初探/#comment" class="comment-link">评论</a>
+          
+          <a href='javascript:void(0)' class="share-link bdsharebuttonbox" data-cmd="more">分享</a>
+        </div>
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/git/">git</a>
+  </div>
+
+        <!-- partial('post/share') -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  <!-- 多说评论框 start -->
+  <div class="ds-thread" data-thread-key="[post]-git使用初探" data-title="git使用初探" data-url="http://bondlee.github.io/2016/04/26/git使用初探/"></div>
+  <!-- 多说评论框 end -->
+  <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:'bondlee'};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+       || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+  <!-- 多说公共JS代码 end -->
+
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:bondlee.github.io">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/04/26/git多账号切换/">git多账号切换</a>
+      </li>
+    
+      <li>
+        <a href="/2016/04/26/git语法/">git语法</a>
+      </li>
+    
+      <li>
+        <a href="/2016/04/26/git使用初探/">git使用初探</a>
+      </li>
+    
+      <li>
+        <a href="/2016/04/26/ElasticSearch使用初探/">ElasticSearch使用初探</a>
+      </li>
+    
+      <li>
+        <a href="/2016/04/26/Raid常用类型/">Raid常用类型</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/ElasticSearch/">ElasticSearch</a><small>1</small></li>
+  
+    <li><a href="/tags/git/">git</a><small>3</small></li>
+  
+    <li><a href="/tags/others/">others</a><small>1</small></li>
+  
+    <li><a href="/tags/python/">python</a><small>1</small></li>
+  
+    <li><a href="/tags/ubuntu/">ubuntu</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/ElasticSearch/" style="font-size: 10px;">ElasticSearch</a> <a href="/tags/git/" style="font-size: 20px;">git</a> <a href="/tags/others/" style="font-size: 10px;">others</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/ubuntu/" style="font-size: 10px;">ubuntu</a>
+  </div>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  <p>
+  
+  &copy; 2016 Bond Lee
+  
+  All rights reserved.</p>
+  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
+</div>
+<div class="clearfix"></div>
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script></footer>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+<div id='bg'></div>
+</body>
+</html>

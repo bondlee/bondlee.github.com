@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://bondlee.github.io/"/>
-  <updated>2016-04-26T10:36:04.037Z</updated>
+  <updated>2016-04-26T10:40:44.029Z</updated>
   <id>http://bondlee.github.io/</id>
   
   <author>
@@ -14,6 +14,328 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>git多账号切换</title>
+    <link href="http://bondlee.github.io/2016/04/26/git%E5%A4%9A%E8%B4%A6%E5%8F%B7%E5%88%87%E6%8D%A2/"/>
+    <id>http://bondlee.github.io/2016/04/26/git多账号切换/</id>
+    <published>2016-04-26T10:38:44.000Z</published>
+    <updated>2016-04-26T10:40:44.029Z</updated>
+    
+    <content type="html">&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;多个github的账号，不同的账号对应不同的repo，需要push的时候自动区分账号&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;多个git的账号，对应不同的仓库（github，bitbucket，私有gitla），需要push的时候自动区分账号&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;多个git账号&quot;&gt;&lt;a href=&quot;#多个git账号&quot; class=&quot;headerlink&quot; title=&quot;多个git账号&quot;&gt;&lt;/a&gt;多个git账号&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;生成ssh key&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;先假设我有两个账号，一个是github上的，一个是公司gitlab上面的。先为不同的账号生成不同的ssh-key&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;（windows 在C:\Users\username\.ssh）
+ssh-keygen -t rsa -f ~/.ssh/id_rsa_gitlab -c xxx@gmail.com
+ssh-keygen -t rsa -f ~/.ssh/id_rsa_github -c xxx@gmail.com
+&lt;/code&gt;&lt;/pre&gt;&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;把对应得到的id_rsa_github和id_rsa_gitlab.pub，分别把添加到github和gitlab中&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;编辑~/.ssh/config, 设定不同的git 服务器对应不同的key&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# Default github user(first@mail.com),注意User项直接填git，不用填在github的用户名
+Host github.com
+HostName github.com
+User git
+IdentityFile ~/.ssh/id_rsa_github
+
+# second user(second@mail.com)
+# 建一个gitlab别名，新建的帐号使用这个别名做克隆和更新
+Host 10.214.224.201
+HostName 10.214.224.201
+User work
+IdentityFile ~/.ssh/id_rsa_gitlab
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;检查是否对应： ssh -vT git@github.com&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;多个github账号&quot;&gt;&lt;a href=&quot;#多个github账号&quot; class=&quot;headerlink&quot; title=&quot;多个github账号&quot;&gt;&lt;/a&gt;多个github账号&lt;/h4&gt;&lt;p&gt;所有步骤相同，只有步骤3不同，ssh区分账号，其实靠的是HostName这个字段，因此如果在github上有多个账号，很容易的可以把不同的账号映射到不同的HostName上就可以了。比如我有A和B两个账号， 先按照步骤一生成不同的key文件，再修改~/.ssh/config 内容应该是这样的。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# Default github user(A@mail.com),注意User项直接填git，不用填在github的用户名
+Host A.github.com
+ HostName github.com
+ User git
+ IdentityFile ~/.ssh/id_rsa_github_A
+
+# second user(B@mail.com)
+# 建一个gitlab别名，新建的帐号使用这个别名做克隆和更新
+Host A.github.com
+ HostName github.com
+ User git
+ IdentityFile ~/.ssh/id_rsa_github_B
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;更换提交地址，直接更改 repo/.git/config 里面的url即可&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;修改：
+git@github.com:testA/gopkg.git
+为：
+git@A.github.com:testA/gopkg.git
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&quot;一个repo同时推送到多个不同的仓库&quot;&gt;&lt;a href=&quot;#一个repo同时推送到多个不同的仓库&quot; class=&quot;headerlink&quot; title=&quot;一个repo同时推送到多个不同的仓库&quot;&gt;&lt;/a&gt;一个repo同时推送到多个不同的仓库&lt;/h4&gt;&lt;p&gt;直接更改 repo/.git/config 里面的url即可，把里面对应tag下的url增加一个就可以了。例:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[remote &amp;quot;GitHub&amp;quot;]
+url = git@github.com:elliottcable/Paws.o.git
+fetch = +refs/heads/*:refs/remotes/GitHub/*
+[branch &amp;quot;Master&amp;quot;]
+    remote = GitHub
+    merge = refs/heads/Master
+[remote &amp;quot;Codaset&amp;quot;]
+    url = git@codaset.com:elliottcable/paws-o.git
+    fetch = +refs/heads/*:refs/remotes/Codaset/*
+[remote &amp;quot;Paws&amp;quot;]
+    url = git@github.com:Paws/Paws.o.git
+    fetch = +refs/heads/*:refs/remotes/Paws/*
+[remote &amp;quot;Origin&amp;quot;]
+    url = git@github.com:Paws/Paws.o.git # 推送到github
+    url = git@codaset.com:elliottcable/paws-o.git #推送到codaset
+&lt;/code&gt;&lt;/pre&gt;</content>
+    
+    <summary type="html">
+    
+      &lt;ul&gt;
+&lt;li&gt;&lt;p&gt;多个github的账号，不同的账号对应不同的repo，需要push的时候自动区分账号&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;多个git的账号，对应不同的仓库（github，bitbucket，私有gitla），需要push的时候自动区分账号&lt;/p&gt;
+&lt;/li&gt;
+    
+    </summary>
+    
+    
+      <category term="git" scheme="http://bondlee.github.io/tags/git/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>git语法</title>
+    <link href="http://bondlee.github.io/2016/04/26/git%E8%AF%AD%E6%B3%95/"/>
+    <id>http://bondlee.github.io/2016/04/26/git语法/</id>
+    <published>2016-04-26T10:38:31.000Z</published>
+    <updated>2016-04-26T10:39:33.620Z</updated>
+    
+    <content type="html">&lt;h3 id=&quot;init&quot;&gt;&lt;a href=&quot;#init&quot; class=&quot;headerlink&quot; title=&quot;init&quot;&gt;&lt;/a&gt;init&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;init 新建一个git代码库&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git init
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;新建一个目录，将其初始化为Git代码库&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git init [project-name]
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;clone一个项目&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git clone url 
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;add-rm&quot;&gt;&lt;a href=&quot;#add-rm&quot; class=&quot;headerlink&quot; title=&quot;add/rm&quot;&gt;&lt;/a&gt;add/rm&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;git add [file1] [file2] 添加指定文件&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;git add [dir] 添加指定的目录到暂存区，包括子目录&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;git rm [file1] [file2] … # 删除工作区文件，并且将这次删除放入暂存区&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;git rm –cached [file] # 停止追踪指定文件，但该文件会保留在工作区&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;git mv [file-original] [file-renamed] # 改名文件，并且将这个改名放入暂存区&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;commit&quot;&gt;&lt;a href=&quot;#commit&quot; class=&quot;headerlink&quot; title=&quot;commit&quot;&gt;&lt;/a&gt;commit&lt;/h3&gt;&lt;p&gt;commit用于将文件提交到仓库区&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;git commit -m [message] # 提交暂存区到仓库区&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;git commit [file1] [file2] … -m [message] # 提交暂存区的指定文件到仓库区&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;git commit -a # 提交工作区自上次commit之后的变化，直接到仓库区&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;git commit -v # 提交时显示所有diff信息&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;git commit –amend -m [message] # 使用一次新的commit，替代上一次提交,如果代码没有任何新变化，则用来改写上一次commit的提交信息&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;$ git commit –amend [file1] [file2] …# 重做上一次commit，并包括指定文件的新变化&lt;/p&gt;
+&lt;h3 id=&quot;checkout&quot;&gt;&lt;a href=&quot;#checkout&quot; class=&quot;headerlink&quot; title=&quot;checkout&quot;&gt;&lt;/a&gt;checkout&lt;/h3&gt;&lt;p&gt;checkout用于操作git的Head指针&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;git checkout [-q] [&lt;commit&gt;] [–] &lt;paths&gt;… 重置的是HEAD，检出的默认值是暂存区。相当于放弃本地修改&lt;/paths&gt;&lt;/commit&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;git checkout [&lt;branch&gt;] 改变head投指针，head将切换到另一个分支&lt;/branch&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;git checkout [-m] [[-b]–orphan] &lt;new_branch&gt;] [&lt;start_point&gt;] 创建并切换到新的分支上。&lt;/start_point&gt;&lt;/new_branch&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;例如：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git checout -m mywork master
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;remote&quot;&gt;&lt;a href=&quot;#remote&quot; class=&quot;headerlink&quot; title=&quot;remote&quot;&gt;&lt;/a&gt;remote&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;查看远程&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;merge&quot;&gt;&lt;a href=&quot;#merge&quot; class=&quot;headerlink&quot; title=&quot;merge&quot;&gt;&lt;/a&gt;merge&lt;/h3&gt;&lt;h3 id=&quot;rebase&quot;&gt;&lt;a href=&quot;#rebase&quot; class=&quot;headerlink&quot; title=&quot;rebase&quot;&gt;&lt;/a&gt;rebase&lt;/h3&gt;&lt;p&gt;rebase 意为重新使用基础版本，这个命令实际上对应了非常多的操作，mywork本来是origin 分支C2分出去的，origin有C3，C4有两个版本的内核更新，mywork在分出去后又C5，C6两个版本外观更新，这个时候使用rebase可以先把C5，C6当成补丁暂存，先把内核更新到origin的C4，然后再将C5，C6以补丁的方式更新上来，这样看起来的mywork的更新的图就是下面这样。&lt;/p&gt;
+&lt;p&gt;运行gc命令的话，C5，C6的commit就会被删除回收掉。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://i.imgur.com/eSKvNIk.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;在rebase的过程中，也许会出现冲突(conflict). 在这种情况，Git会停止rebase并会让你去解决 冲突；在解决完冲突后，用”git-add”命令去更新这些内容的索引(index), 然后，你无需执行 git-commit,只要执行:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ git rebase --continue
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;在任何时候，你可以用–abort参数来终止rebase的行动，并且”mywork” 分支会回到rebase开始前的状态。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ git rebase --abort
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;fetch&quot;&gt;&lt;a href=&quot;#fetch&quot; class=&quot;headerlink&quot; title=&quot;fetch&quot;&gt;&lt;/a&gt;fetch&lt;/h3&gt;&lt;h3 id=&quot;pull&quot;&gt;&lt;a href=&quot;#pull&quot; class=&quot;headerlink&quot; title=&quot;pull&quot;&gt;&lt;/a&gt;pull&lt;/h3&gt;&lt;h3 id=&quot;push&quot;&gt;&lt;a href=&quot;#push&quot; class=&quot;headerlink&quot; title=&quot;push&quot;&gt;&lt;/a&gt;push&lt;/h3&gt;&lt;h1 id=&quot;附录&quot;&gt;&lt;a href=&quot;#附录&quot; class=&quot;headerlink&quot; title=&quot;附录&quot;&gt;&lt;/a&gt;附录&lt;/h1&gt;&lt;hr&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://gitbook.liuhui998.com/4_2.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://gitbook.liuhui998.com/4_2.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;init&quot;&gt;&lt;a href=&quot;#init&quot; class=&quot;headerlink&quot; title=&quot;init&quot;&gt;&lt;/a&gt;init&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;init 新建一个git代码库&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git init
+&lt;/code&gt;&lt;/pre&gt;
+    
+    </summary>
+    
+    
+      <category term="git" scheme="http://bondlee.github.io/tags/git/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>git使用初探</title>
+    <link href="http://bondlee.github.io/2016/04/26/git%E4%BD%BF%E7%94%A8%E5%88%9D%E6%8E%A2/"/>
+    <id>http://bondlee.github.io/2016/04/26/git使用初探/</id>
+    <published>2016-04-26T10:38:18.000Z</published>
+    <updated>2016-04-26T10:40:29.790Z</updated>
+    
+    <content type="html">&lt;p&gt;CVS及SVN都是集中式的版本控制系统，而Git是分布式版本控制系统，集中式和分布式版本控制系统有什么区别呢？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;DVCS 通过本地提交支持离线工作，这是由 DVCS 的操作方式决定的。这与集中式版本控制完全不同.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;集中式版本控制要求通过到中心服务器的连接执行所有操作。这种灵活性让开发人员在飞机上也能够像在办公室中一样轻松地工作，可以一次又一次地进行提交。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;在需要进行推（push ）操作（与另一个节点通信）时，速度也更快，因为两个客户机机器上都有完整的元数据。速度差异相当显著，根据使用本地存储库还是网络存储库，DVCS 比Subversion 快大约 3-10 倍。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;git-概念&quot;&gt;&lt;a href=&quot;#git-概念&quot; class=&quot;headerlink&quot; title=&quot;git 概念&quot;&gt;&lt;/a&gt;git 概念&lt;/h3&gt;&lt;p&gt;本地仓库由git维护的三棵树组成：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;工作目录(workset)：持有实际文件&lt;/li&gt;
+&lt;li&gt;暂存区（index）： 缓存区域，临时保存你的改动&lt;/li&gt;
+&lt;li&gt;Head：指向最后一次提交的结果&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;workset&lt;/strong&gt; –&amp;gt; add –&amp;gt; &lt;strong&gt;index&lt;/strong&gt; –&amp;gt; commit –&amp;gt;&lt;strong&gt;Head&lt;/strong&gt;&lt;/p&gt;
+&lt;h3 id=&quot;创建仓库&quot;&gt;&lt;a href=&quot;#创建仓库&quot; class=&quot;headerlink&quot; title=&quot;创建仓库&quot;&gt;&lt;/a&gt;创建仓库&lt;/h3&gt;&lt;p&gt;运行下面命令，系统会默认为&lt;strong&gt;本地的分支为master&lt;/strong&gt;，&lt;strong&gt;远程的分支为origin&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;创建新仓库，创建新文件夹，打开，然后执行&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git init 
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;从本地的git clone一个仓库&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git clone /path/to/repository
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;连接远程仓库&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git remote add origin &amp;lt;server&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;clone 远程服务器上的仓库&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git clone username@host:/path/to/repository
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;上传修改-add-commit-push&quot;&gt;&lt;a href=&quot;#上传修改-add-commit-push&quot; class=&quot;headerlink&quot; title=&quot;上传修改( add, commit, push)&quot;&gt;&lt;/a&gt;上传修改( add, commit, push)&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;添加到index中&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git add &amp;lt;filename&amp;gt;
+git add *
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;更新本地head，使用如下命令以实际提交改动：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git commit -m &amp;quot;代码提交信息&amp;quot;
+git commit -ma &amp;quot;代码提交，并将发生改动的加入到index中&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;推送改动&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git push origin master # master可以换成我们想要推送的分支
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;更新与合并-pull-merge-checkout-fetch-reset&quot;&gt;&lt;a href=&quot;#更新与合并-pull-merge-checkout-fetch-reset&quot; class=&quot;headerlink&quot; title=&quot;更新与合并( pull, merge, checkout, fetch, reset)&quot;&gt;&lt;/a&gt;更新与合并( pull, merge, checkout, fetch, reset)&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;要更新本地仓库至最新改动，执行：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git pull
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;该命令将获取并合并远端的改动，要合并其他分支到我们的分支，执行：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git merge &amp;lt;branch&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;放弃本地改动，取用服务器上的版本&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git checkout -- &amp;lt;filename&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;此命令会使用HEAD中的最新内容替换掉你的工作目录中的文件，已添加到暂存区的改动以及新文件都不会受到影响&lt;/p&gt;
+&lt;p&gt;例如：在hello.py所在的文件夹下执行，即可&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git checkout -- hello.py
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;如果想丢弃在本地的所有改动与提交，可以到服务器上获取最新的版本历史，并将本地分支指向它&lt;/p&gt;
+&lt;p&gt;  git fetch origin&lt;/p&gt;
+&lt;p&gt;  git reset –hard origin/master&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;也可以使用stash命令，放弃所有修：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git stash drop
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;分支&quot;&gt;&lt;a href=&quot;#分支&quot; class=&quot;headerlink&quot; title=&quot;分支&quot;&gt;&lt;/a&gt;分支&lt;/h3&gt;&lt;p&gt;分支是用来将特性开发绝缘开来的，在创建仓库的时候，master是默认的分支，在其他分支上进行开发，完成后在将它们合并到主分支上。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;切换分支：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git checkout -b feature_x # 创建一个叫做”feature_x“的分支，并切换过去：
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;切换回主分支：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git checkout master
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;删除分支&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git branch -d feature_x
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;推送分支&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git push origin &amp;lt;branch&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;合并分支&quot;&gt;&lt;a href=&quot;#合并分支&quot; class=&quot;headerlink&quot; title=&quot;合并分支&quot;&gt;&lt;/a&gt;合并分支&lt;/h3&gt;&lt;p&gt;场景：&lt;strong&gt;origin&lt;/strong&gt;为公司代码的主干版本，而我们团队负责为某个项目特别优化的一个分支版本，但是定期我们需要合并主干版本的重要更新，并且在关键节点上要发布产品。&lt;/p&gt;
+&lt;p&gt;假设我们现在基于远程分支“origin”创建一个叫“mywork”的分支，origin之前已经有两个提交了：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git checkout -b mywork origin
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;然后origin有两个更新C3，C4， mywork有两个更新C5，C6&lt;/p&gt;
+&lt;h4 id=&quot;merge&quot;&gt;&lt;a href=&quot;#merge&quot; class=&quot;headerlink&quot; title=&quot;merge&quot;&gt;&lt;/a&gt;merge&lt;/h4&gt;&lt;p&gt;git 进行merge的结果比较容易理解，若执行命令&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git checkout mywork
+git mrege origin
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;则会将origin中的修改合并到mywork分支中.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://i.imgur.com/nGk6RHt.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h5 id=&quot;冲突解决&quot;&gt;&lt;a href=&quot;#冲突解决&quot; class=&quot;headerlink&quot; title=&quot;冲突解决&quot;&gt;&lt;/a&gt;冲突解决&lt;/h5&gt;&lt;p&gt;有时候合并操作并不会如此顺利。如果在不同的分支中都修改了同一个文件的同一部分，Git 就无法干净地把两者合到一起。此时合并会中止，发生冲突的文件会以&lt;strong&gt;unmerged&lt;/strong&gt;状态标识出来。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt;&amp;lt; HEAD
+&amp;lt;div id=&amp;quot;footer&amp;quot;&amp;gt;contact : email.support@github.com&amp;lt;/div&amp;gt;
+=======
+&amp;lt;div id=&amp;quot;footer&amp;quot;&amp;gt;
+  please contact us at support@github.com
+&amp;lt;/div&amp;gt;
+&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; iss53
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;可以看到 ======= 隔开的上半部分，是 HEAD（即 master 分支，在运行 merge 命令时所切换到的分支）中的内容，下半部分是在 iss53 分支中的内容。解决冲突的办法无非是二者选其一或者由你亲自整合到一起。比如你可以通过把这段内容替换为下面这样来解决：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;div id=&amp;quot;footer&amp;quot;&amp;gt;
+    please contact us at email.support@github.com
+&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;运行 git add 将把它们标记为已解决状态&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git add file
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果你想用一个有图形界面的工具来解决这些问题，不妨运行 git mergetool，它会调用一个可视化的合并工具并引导你解决所有冲突，退出合并工具以后，Git 会询问你合并是否成功。如果回答是，它会为你把相关文件暂存起来，以表明状态为已解决。&lt;/p&gt;
+&lt;p&gt;就可以用 git commit 来完成这次合并提交。提交的记录差不多是这样：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git commit
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;更复杂的合并，可以参考 &lt;a href=&quot;https://git-scm.com/book/zh/v1/Git-%E5%88%86%E6%94%AF-%E5%88%86%E6%94%AF%E7%9A%84%E6%96%B0%E5%BB%BA%E4%B8%8E%E5%90%88%E5%B9%B6&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;分支合并&lt;/a&gt;&lt;/p&gt;
+&lt;h4 id=&quot;rebase&quot;&gt;&lt;a href=&quot;#rebase&quot; class=&quot;headerlink&quot; title=&quot;rebase&quot;&gt;&lt;/a&gt;rebase&lt;/h4&gt;&lt;p&gt;rebase 意为重新使用基础版本，这个命令实际上对应了非常多的操作，mywork本来是origin 分支C2分出去的，origin有C3，C4有两个版本的内核更新，mywork在分出去后又C5，C6两个版本外观更新，这个时候使用rebase可以先把C5，C6当成补丁暂存，先把内核更新到origin的C4，然后再将C5，C6以补丁的方式更新上来，这样看起来的mywork的更新的图就是下面这样。&lt;/p&gt;
+&lt;p&gt;运行gc命令的话，C5，C6的commit就会被删除回收掉。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://i.imgur.com/eSKvNIk.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;在rebase的过程中，也许会出现冲突(conflict). 在这种情况，Git会停止rebase并会让你去解决 冲突；在解决完冲突后，用”git-add”命令去更新这些内容的索引(index), 然后，你无需执行 git-commit,只要执行:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ git rebase --continue
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;在任何时候，你可以用–abort参数来终止rebase的行动，并且”mywork” 分支会回到rebase开始前的状态。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ git rebase --abort
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;git-rebase和git-merge的区别：&quot;&gt;&lt;a href=&quot;#git-rebase和git-merge的区别：&quot; class=&quot;headerlink&quot; title=&quot;git rebase和git merge的区别：&quot;&gt;&lt;/a&gt;git rebase和git merge的区别：&lt;/h3&gt;&lt;p&gt;当我们使用Git log来参看commit时，其commit的顺序也有所不同。&lt;br&gt;假设C3提交于9:00AM,C5提交于10:00AM,C4提交于11:00AM，C6提交于12:00AM,&lt;br&gt;对于使用git merge来合并所看到的commit的顺序（从新到旧）是：C7 ,C6,C4,C5,C3,C2,C1(严格按照时间顺序排列)&lt;br&gt;对于使用git rebase来合并所看到的commit的顺序（从新到旧）是：C7 ,C6‘,C5’,C4,C3,C2,C1&lt;br&gt; 因为C6’提交只是C6提交的克隆，C5’提交只是C5提交的克隆，&lt;br&gt;从用户的角度看使用git rebase来合并后所看到的commit的顺序（从新到旧）是：C7 ,C6,C5,C4,C3,C2,C1&lt;/p&gt;
+&lt;h3 id=&quot;标签（TODO）&quot;&gt;&lt;a href=&quot;#标签（TODO）&quot; class=&quot;headerlink&quot; title=&quot;标签（TODO）&quot;&gt;&lt;/a&gt;标签（TODO）&lt;/h3&gt;&lt;p&gt;为软件发布创建标签是推荐的，这个概念早已存在，在SVN中就有有，可以执行如下命令创建一个叫做1.0.0的标签：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git tag 1.0.0 1b2e1d63ff
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;1b231d63ff是我们想要标记的提交ID的前10位字符，可以使用如下命令获取提交ID：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;git log
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;也可以使用少一点的提交ID前几位，只要它的指向具有唯一性。&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;CVS及SVN都是集中式的版本控制系统，而Git是分布式版本控制系统，集中式和分布式版本控制系统有什么区别呢？&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;DVCS 通过本地提交支持离线工作，这是由 DVCS 的操作方式决定的。这与集中式版本控制完全不同.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+    
+    </summary>
+    
+    
+      <category term="git" scheme="http://bondlee.github.io/tags/git/"/>
+    
+  </entry>
   
   <entry>
     <title>ElasticSearch使用初探</title>
