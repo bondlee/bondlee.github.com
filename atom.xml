@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://bondlee.github.io/"/>
-  <updated>2016-04-26T02:31:54.180Z</updated>
+  <updated>2016-04-26T10:36:04.037Z</updated>
   <id>http://bondlee.github.io/</id>
   
   <author>
@@ -16,11 +16,445 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>ElasticSearch使用初探</title>
+    <link href="http://bondlee.github.io/2016/04/26/ElasticSearch%E4%BD%BF%E7%94%A8%E5%88%9D%E6%8E%A2/"/>
+    <id>http://bondlee.github.io/2016/04/26/ElasticSearch使用初探/</id>
+    <published>2016-04-26T10:35:32.000Z</published>
+    <updated>2016-04-26T10:36:04.037Z</updated>
+    
+    <content type="html">&lt;h3 id=&quot;简易搜索&quot;&gt;&lt;a href=&quot;#简易搜索&quot; class=&quot;headerlink&quot; title=&quot;简易搜索&quot;&gt;&lt;/a&gt;简易搜索&lt;/h3&gt;&lt;p&gt;简单搜索是通过查询字符串定义的，查询方式简单，但实现的功能也比较少。&lt;/p&gt;
+&lt;h4 id=&quot;空搜索&quot;&gt;&lt;a href=&quot;#空搜索&quot; class=&quot;headerlink&quot; title=&quot;空搜索&quot;&gt;&lt;/a&gt;空搜索&lt;/h4&gt;&lt;pre&gt;&lt;code&gt;GET /_search
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img src=&quot;http://i.imgur.com/Uq08Xr8.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;响应内容如下&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;total：匹配到的文档总数&lt;/li&gt;
+&lt;li&gt;_score：相关性得分，衡量了文档与查询的匹配程度&lt;/li&gt;
+&lt;li&gt;max_score：指的是所有文档匹配查询中_score的最大值&lt;/li&gt;
+&lt;li&gt;took：整个搜索请求话费的毫秒数&lt;/li&gt;
+&lt;li&gt;shards：参与查询的分片数&lt;/li&gt;
+&lt;li&gt;suffessfull：成功的次数&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;timeout：查询是否超时，查询时可以设置超时时间&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET /_search?timeout=10ms
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&quot;搜索特定文档&quot;&gt;&lt;a href=&quot;#搜索特定文档&quot; class=&quot;headerlink&quot; title=&quot;搜索特定文档&quot;&gt;&lt;/a&gt;搜索特定文档&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;搜索全部文档的请求,默认返回前10个命中的结果&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET /megacorp/employee/_search?pretty}}}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;带关键字的查询q=属性：&lt;/li&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;的查询，可以得到所有属性=value的结果&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET /megacorp/employee/_search?q=last_name:Smith
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;通过URL路径的方式限定查询的索引和类型范围&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;例：在索引gb和us的所有类型中搜索&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;/gb,us/_search
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;例：在以g或u开头的索引的所有类型中搜索&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;/g*,u*/_search
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;例：在索引gb和us的类型为user和tweet中搜索&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;/_all/user,tweet/_search
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;每次查询结果都是&lt;strong&gt;排序&lt;/strong&gt;的，但一个搜索请求常常设计多个分片，每个分片生成自己排好序的结果，它们接着需要集中起来排序以确保整体&lt;strong&gt;排序正确&lt;/strong&gt;。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;查询所有类型为tweet并在tweet字段中包含elasticsearch字符的文档&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;pre&gt;&lt;code&gt;GET /_all/tweet/_search?q=tweet:elasticsearch
+&lt;/code&gt;&lt;/pre&gt;&lt;blockquote&gt;
+&lt;p&gt;如果查找name字段中包含”john“和tweet字段中包含”mary“的结果，实际的查询结果只需要变为如下：&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;pre&gt;&lt;code&gt;GET /a_ll/tweet/_search?q=tweet:elasticseach+name:john+tweet:mary
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&quot;校验查询语句&quot;&gt;&lt;a href=&quot;#校验查询语句&quot; class=&quot;headerlink&quot; title=&quot;校验查询语句&quot;&gt;&lt;/a&gt;校验查询语句&lt;/h4&gt;&lt;p&gt;查询语句可以变的非常复杂，所以我们需要使用validate方法校验查询语句。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET /gb/tweet/_validate/query
+{
+    &amp;quot;query&amp;quot;:{
+        &amp;quot;tweet&amp;quot;: {
+            &amp;quot;match&amp;quot;:&amp;quot;really powerfull&amp;quot;
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果是合法语句，会有一个explainations字段为每一个索引索引一段描述，每个索引会有不同的映射关系和分析器：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://i.imgur.com/MLqeEno.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;pretty&quot;&gt;&lt;a href=&quot;#pretty&quot; class=&quot;headerlink&quot; title=&quot;pretty&quot;&gt;&lt;/a&gt;pretty&lt;/h4&gt;&lt;p&gt;在查询url中最后添加上pretty参数，可以使结果非常整洁&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;get http://10.214.208.166:9200/wiforce-2015.12.20
+/_mapping/detected_ap_measurement?pretty
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;富搜索–结构化查询语句DSL&quot;&gt;&lt;a href=&quot;#富搜索–结构化查询语句DSL&quot; class=&quot;headerlink&quot; title=&quot;富搜索–结构化查询语句DSL&quot;&gt;&lt;/a&gt;富搜索–结构化查询语句DSL&lt;/h3&gt;&lt;p&gt;大多数的参数以&lt;strong&gt;JSON格式&lt;/strong&gt;所容纳而非查询字符串，请求体查询并不仅仅用来处理查询，而且还可以&lt;strong&gt;高亮&lt;/strong&gt;返回结果中的片段，并且给出帮助你的用户找寻最好的结果的相关数据建议。&lt;/p&gt;
+&lt;h4 id=&quot;指定索引和类型&quot;&gt;&lt;a href=&quot;#指定索引和类型&quot; class=&quot;headerlink&quot; title=&quot;指定索引和类型&quot;&gt;&lt;/a&gt;指定索引和类型&lt;/h4&gt;&lt;pre&gt;&lt;code&gt;GET /index/type1,type2/_search
+{}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;当然我们还可以使用&lt;strong&gt;from&lt;/strong&gt;和&lt;strong&gt;size&lt;/strong&gt;参数进行分页&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET /_search
+{
+    &amp;quot;from&amp;quot;:30,
+    &amp;quot;size&amp;quot;:10
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&quot;查询关键字&quot;&gt;&lt;a href=&quot;#查询关键字&quot; class=&quot;headerlink&quot; title=&quot;查询关键字&quot;&gt;&lt;/a&gt;查询关键字&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;query：查询关键字&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;filter: 需要以过滤条件开始，把query语句放到filtered中&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在收件箱中查询email中与business opportunity相关的邮件。查询语句为：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET /_search
+{
+    &amp;quot;query&amp;quot;:{
+        &amp;quot;filtered&amp;quot;:{
+            &amp;quot;filter&amp;quot;: {&amp;quot;term&amp;quot;: {&amp;quot;folder&amp;quot;: &amp;quot;inbox&amp;quot;} }
+        }
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;term：主要用于精确匹配哪些值，比如数字，日期，布尔值（not_analyzed的字符串）&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{&amp;quot;term&amp;quot;: {&amp;quot;age&amp;quot;: 26 }}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;terms：允许多个匹配&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{&amp;quot;terms&amp;quot;: {&amp;quot;age&amp;quot;: [26,1,2,3,4] }}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;match_all：匹配所有的文档&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;match: 查询子句用来更进一步匹配，match的匹配并不是完全匹配，例如tweet中包含elasticsearch字段的&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET /_search
+{
+    &amp;quot;query&amp;quot;:{
+        &amp;quot;match&amp;quot;:{
+            &amp;quot;tweet&amp;quot;:&amp;quot;elasticsearch&amp;quot;
+        }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;bool: 用于合并多个查询子句&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;must: 必须符合的子句，多个查询条件的完全匹配&lt;strong&gt;and&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;must_not: 不需要符合的子句，多个查询条件的相反匹配 &lt;strong&gt;not&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;should：至少有一个查询条件匹配，相当于&lt;strong&gt;or&lt;/strong&gt;，可以有多个&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;bool&amp;quot;:{
+        &amp;quot;must&amp;quot;: {&amp;quot;match&amp;quot;: {&amp;quot;tweet&amp;quot;: &amp;quot;elasticseach&amp;quot;}},
+        &amp;quot;must_not&amp;quot;: {&amp;quot;match&amp;quot;: {&amp;quot;name&amp;quot;: &amp;quot;mary&amp;quot;}},
+        &amp;quot;should&amp;quot;: [
+                    {&amp;quot;term&amp;quot;: {&amp;quot;starred&amp;quot;:true}},
+                    {&amp;quot;term&amp;quot;: {&amp;quot;unread&amp;quot;:true}}
+        ]
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;range：过滤一定范围内的数据（gt 大于，gte 大于等于， lt 小于， lte小于等于）&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;range {
+         field :{
+              gte: value1
+              lt：value2
+         }
+    }
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;exists，missing：查找文档中是否包含指定字段或没有某个字段，类似于SQL语句中的IS_NULL条件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;multi_match查询：允许在做match查询的基础上同时查询多个字段，如要在tilte和body中同时检索关键字“full text search”，则可使用mutli_match检索&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;multi_match&amp;quot;:{
+        &amp;quot;query&amp;quot;: &amp;quot;full text search&amp;quot;,
+        &amp;quot;fields&amp;quot;: [&amp;quot;title&amp;quot;, &amp;quot;body&amp;quot;]
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;聚合查询-aggregations&quot;&gt;&lt;a href=&quot;#聚合查询-aggregations&quot; class=&quot;headerlink&quot; title=&quot;聚合查询 aggregations&quot;&gt;&lt;/a&gt;聚合查询 aggregations&lt;/h3&gt;&lt;p&gt;聚合查询本想放到查询关键字中，但这部分确实会复杂很大，需要用更多的例子描述，所以这里我们单独例一个章节描述，同样以查询关键字为索引。 聚合查询和sql中的 group by 很类似，不同的是elasticseach中的聚合查询非常快，大部分查询都能在1s内完成，这对于mysql这样的传统数据库和基于MR的HIVE是不大可能实现的。&lt;/p&gt;
+&lt;h4 id=&quot;类型&quot;&gt;&lt;a href=&quot;#类型&quot; class=&quot;headerlink&quot; title=&quot;类型&quot;&gt;&lt;/a&gt;类型&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;metric 聚合查询的条件，一般是查询函数&lt;/li&gt;
+&lt;li&gt;buckets 聚合查询得到的结果保留到这个字段中&lt;/li&gt;
+&lt;li&gt;pipeline 聚合查询可以不断&lt;strong&gt;嵌套&lt;/strong&gt;，深入下去&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&quot;结构&quot;&gt;&lt;a href=&quot;#结构&quot; class=&quot;headerlink&quot; title=&quot;结构&quot;&gt;&lt;/a&gt;结构&lt;/h4&gt;&lt;p&gt;聚合查询的基本结构如下,与DSL的查询结构类似，同样使用JSON结构体用于描述查询请求。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;quot;aggregations（关键字）&amp;quot; : {
+    &amp;quot;&amp;lt;aggregation_name（给聚合取个名称）&amp;gt;&amp;quot; : {
+        &amp;quot;&amp;lt;aggregation_type（聚合类型，sum avg等等）&amp;gt;&amp;quot; : {
+            &amp;lt;aggregation_body&amp;gt;
+        }
+        [,&amp;quot;meta&amp;quot; : {  [&amp;lt;meta_data_body&amp;gt;] } ]?
+        [,&amp;quot;aggregations&amp;quot; : { [&amp;lt;sub_aggregation子聚合&amp;gt;]+ } ]?
+    }
+    [,&amp;quot;&amp;lt;aggregation_name_2 平行聚合&amp;gt;&amp;quot; : { ... } ]*
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&quot;metric-聚合&quot;&gt;&lt;a href=&quot;#metric-聚合&quot; class=&quot;headerlink&quot; title=&quot;metric 聚合&quot;&gt;&lt;/a&gt;metric 聚合&lt;/h4&gt;&lt;p&gt;metric(度量)聚合通常是常用的数学函数查询，因此我们会专挑一些有代表性的进行描述&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;sum 对某个字段求和&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+     &amp;quot;aggs&amp;quot; : {
+        &amp;quot;intraday_return&amp;quot; : { &amp;quot;sum&amp;quot; : { &amp;quot;field&amp;quot; : &amp;quot;change&amp;quot; } }
+      }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;avg 计算所有分数的平均值,缺失值用0填充&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;aggs&amp;quot; : {
+        &amp;quot;avg_grade&amp;quot; : { &amp;quot;avg&amp;quot; : { &amp;quot;field&amp;quot; : &amp;quot;grade&amp;quot; , &amp;quot;missing&amp;quot;:0} }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;返回结果为&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    ...
+
+    &amp;quot;aggregations&amp;quot;: {
+        &amp;quot;avg_grade&amp;quot;: {
+            &amp;quot;value&amp;quot;: 75
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;通常我们需要计算一些&lt;strong&gt;合成的字段&lt;/strong&gt;的平均值，此时就需要在查询体中写脚本完成,例如我们要计算两门课的平均分。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;aggs&amp;quot; : {
+        &amp;quot;avg_grade&amp;quot; : { &amp;quot;avg&amp;quot; : { &amp;quot;script&amp;quot; : &amp;quot;(doc[&amp;apos;grade1&amp;apos;].value + doc[&amp;apos;grade2&amp;apos;].value)&amp;quot; } }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;stats 常用统计查询&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;aggs&amp;quot; : {
+        &amp;quot;grades_stats&amp;quot; : { &amp;quot;stats&amp;quot; : { &amp;quot;field&amp;quot; : &amp;quot;grade&amp;quot; } }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;返回结果&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    ...
+
+    &amp;quot;aggregations&amp;quot;: {
+        &amp;quot;grades_stats&amp;quot;: {
+            &amp;quot;count&amp;quot;: 6,
+            &amp;quot;min&amp;quot;: 60,
+            &amp;quot;max&amp;quot;: 98,
+            &amp;quot;avg&amp;quot;: 78.5,
+            &amp;quot;sum&amp;quot;: 471
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;extended stats 拓展的统计查询&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;aggs&amp;quot; : {
+        &amp;quot;grades_stats&amp;quot; : { &amp;quot;stats&amp;quot; : { &amp;quot;field&amp;quot; : &amp;quot;grade&amp;quot; } }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;返回结果&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    ...
+
+    &amp;quot;aggregations&amp;quot;: {
+        &amp;quot;grade_stats&amp;quot;: {
+           &amp;quot;count&amp;quot;: 9,
+           &amp;quot;min&amp;quot;: 72,
+           &amp;quot;max&amp;quot;: 99,
+           &amp;quot;avg&amp;quot;: 86,
+           &amp;quot;sum&amp;quot;: 774,
+           &amp;quot;sum_of_squares&amp;quot;: 67028,
+           &amp;quot;variance&amp;quot;: 51.55555555555556,
+           &amp;quot;std_deviation&amp;quot;: 7.180219742846005,
+           &amp;quot;std_deviation_bounds&amp;quot;: {
+            &amp;quot;upper&amp;quot;: 100.36043948569201,
+            &amp;quot;lower&amp;quot;: 71.63956051430799
+           }
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;min&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;aggs&amp;quot; : {
+        &amp;quot;min_price&amp;quot; : { &amp;quot;min&amp;quot; : { &amp;quot;field&amp;quot; : &amp;quot;price&amp;quot; } }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;max&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;aggs&amp;quot; : {
+        &amp;quot;max_price&amp;quot; : { &amp;quot;max&amp;quot; : { &amp;quot;field&amp;quot; : &amp;quot;price&amp;quot; } }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;percentile&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;cardinality(unique count)，因为unique方法需要用到一个缓存做分布式的计算，对于海量的数据而言，如果要做到精确的unique count，缓存很容易爆掉。所以ES官方对这个值做了个限制，可以设为&lt;strong&gt;threshold&lt;/strong&gt;为1000，基本上已经能保持一个比较低的错误率。 cardinality的计算使用到了算法&lt;br&gt;&lt;a href=&quot;http://static.googleusercontent.com/media/research.google.com/fr//pubs/archive/40671.pdf&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;HyperLogLog++ &lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;top hits 查询最相关的TOP N个结果&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;aggs&amp;quot;: {
+        &amp;quot;top-tags&amp;quot;: {
+            &amp;quot;terms&amp;quot;: {
+                &amp;quot;field&amp;quot;: &amp;quot;tags&amp;quot;,
+                &amp;quot;size&amp;quot;: 3
+            },
+            &amp;quot;aggs&amp;quot;: {
+                &amp;quot;top_tag_hits&amp;quot;: {
+                    &amp;quot;top_hits&amp;quot;: {
+                        &amp;quot;sort&amp;quot;: [
+                            {
+                                &amp;quot;last_activity_date&amp;quot;: {
+                                    &amp;quot;order&amp;quot;: &amp;quot;desc&amp;quot;
+                                }
+                            }
+                        ],
+                        &amp;quot;_source&amp;quot;: {
+                            &amp;quot;include&amp;quot;: [
+                                &amp;quot;title&amp;quot;
+                            ]
+                        },
+                        &amp;quot;size&amp;quot; : 1
+                    }
+                }
+            }
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;count 计算值的总和&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;aggs&amp;quot; : {
+        &amp;quot;grades_count&amp;quot; : { &amp;quot;value_count&amp;quot; : { &amp;quot;field&amp;quot; : &amp;quot;grade&amp;quot; } }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;接下来的bucket聚合会更复杂，所以我们还是单独用一个章节来讲。&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;简易搜索&quot;&gt;&lt;a href=&quot;#简易搜索&quot; class=&quot;headerlink&quot; title=&quot;简易搜索&quot;&gt;&lt;/a&gt;简易搜索&lt;/h3&gt;&lt;p&gt;简单搜索是通过查询字符串定义的，查询方式简单，但实现的功能也比较少。&lt;/p&gt;
+&lt;h4 id=&quot;空搜索&quot;&gt;&lt;a href=&quot;#
+    
+    </summary>
+    
+    
+      <category term="ElasticSearch" scheme="http://bondlee.github.io/tags/ElasticSearch/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Raid常用类型</title>
+    <link href="http://bondlee.github.io/2016/04/26/Raid%E5%B8%B8%E7%94%A8%E7%B1%BB%E5%9E%8B/"/>
+    <id>http://bondlee.github.io/2016/04/26/Raid常用类型/</id>
+    <published>2016-04-26T10:31:23.000Z</published>
+    <updated>2016-04-26T10:32:23.283Z</updated>
+    
+    <content type="html">&lt;h3 id=&quot;组成&quot;&gt;&lt;a href=&quot;#组成&quot; class=&quot;headerlink&quot; title=&quot;组成&quot;&gt;&lt;/a&gt;组成&lt;/h3&gt;&lt;p&gt;RAID的由RAID卡和磁盘对应组成。&lt;/p&gt;
+&lt;h3 id=&quot;RAID0&quot;&gt;&lt;a href=&quot;#RAID0&quot; class=&quot;headerlink&quot; title=&quot;RAID0&quot;&gt;&lt;/a&gt;RAID0&lt;/h3&gt;&lt;p&gt;RAID 0亦称为带区集。 它将两个以上的磁盘并联起来，成为一个大容量的磁盘。 在存放数据时，分段后分散储存在这些磁盘中，因为读写时都可以并行处理，所以在所有的级别中，RAID 0的速度是最快的。 但是RAID 0既没有冗余功能，也不具备容错能力，如果一个磁盘（物理）损坏，所有数据都会丢失，危险程度与JBOD相当。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/RAID_0.svg/130px-RAID_0.svg.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h3 id=&quot;RAID1&quot;&gt;&lt;a href=&quot;#RAID1&quot; class=&quot;headerlink&quot; title=&quot;RAID1&quot;&gt;&lt;/a&gt;RAID1&lt;/h3&gt;&lt;p&gt;两组以上的N个磁盘相互作镜像 ，在一些&lt;strong&gt;多线程操作系统中&lt;/strong&gt;能有很好的读取速度，理论上读取速度等于&lt;strong&gt;硬盘数量的倍数&lt;/strong&gt;，另外写入速度有微小的降低。 只要一个磁盘正常即可维持运作，可靠性最高。 其原理为在主硬盘上存放数据的同时也在镜像硬盘上写一样的数据。 当主硬盘（物理）损坏时，镜像硬盘则代替主硬盘的工作。 因为有镜像硬盘做数据备份，所以RAID 1的数据安全性在所有的RAID级别上来说是最好的。 但无论用多少磁碟做RAID 1，仅算一个磁碟的容量，是所有RAID中磁盘利用率最低的一个级别。&lt;/p&gt;
+&lt;p&gt;如果用两个不同大小的磁碟建RAID 1，可用空间为较小的那个磁碟，较大的磁碟多出来的空间也可以分割成一个区来使用，​​不会造成浪费。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://upload.wikimedia.org/math/f/b/c/fbc53fafd7c6ca4f9868844d6848df29.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/RAID_1.svg/130px-RAID_1.svg.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h3 id=&quot;RAID2&quot;&gt;&lt;a href=&quot;#RAID2&quot; class=&quot;headerlink&quot; title=&quot;RAID2&quot;&gt;&lt;/a&gt;RAID2&lt;/h3&gt;&lt;p&gt;这是RAID 0的改良版，以汉明码 （Hamming Code）的方式将数据进行编码后分割为独立的位元，并将数据分别写入硬盘中。 因为在数据中加入了错误修正码（ECC，Error Correction Code），所以数据整体的容量会比原始数据大一些，RAID2最少要三台磁碟机方能运作。&lt;br&gt;&lt;img src=&quot;https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/RAID2_arch.svg/300px-RAID2_arch.svg.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h3 id=&quot;RAID5&quot;&gt;&lt;a href=&quot;#RAID5&quot; class=&quot;headerlink&quot; title=&quot;RAID5&quot;&gt;&lt;/a&gt;RAID5&lt;/h3&gt;&lt;p&gt;RAID Level 5是一种储存性能、数据安全和存储成本兼顾的存储解决方案。 它使用的是Disk Striping（硬盘分割）技术。 RAID 5至少需要三块硬碟，RAID 5不是对存储的数据进行备份，而是把数据和相对应的奇偶校验信息存储到组成RAID5的各个磁盘上，并且奇偶校验信息和相对应的数据分别存储于不同的磁盘上。 当RAID5的一个磁盘数据发生损坏后，可以利用剩下的数据和相应的奇偶校验信息去恢复被损坏的数据。 RAID 5可以理解为是RAID 0和RAID 1的折衷方案。 RAID 5可以为系统提供数据安全保障，但保障程度要比镜像低而磁盘空间利用率要比镜像高。 RAID 5具有和RAID 0相近似的数据读取速度，只是因为多了一个奇偶校验信息，写入数据的速度相对单独写入一块硬盘的速度略慢，若使用「回写快取」可以让效能改善不少。 同时由于多个数据对应一个奇偶校验信息，RAID 5的磁盘空间利用率要比RAID 1高，存储成本相对较便宜。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://upload.wikimedia.org/math/e/c/b/ecb2a38fa089bef7e535085a72ed6291.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/RAID_5.svg/220px-RAID_5.svg.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h3 id=&quot;RAID10-01&quot;&gt;&lt;a href=&quot;#RAID10-01&quot; class=&quot;headerlink&quot; title=&quot;RAID10/01&quot;&gt;&lt;/a&gt;RAID10/01&lt;/h3&gt;&lt;p&gt;RAID 10是先镜射再分割资料，再将所有硬碟分为两组，视为是RAID 0的最低组合，然后将这两组各自视为RAID 1运作。&lt;/p&gt;
+&lt;p&gt;RAID 01则是跟RAID 10的程序相反，是先分割再将资料镜射到两组硬碟。 它将所有的硬碟分为两组，变成RAID 1的最低组合，而将两组硬碟各自视为RAID 0运作。&lt;/p&gt;
+&lt;p&gt;当RAID 10有一个硬碟受损，其余硬碟会继续运作。 RAID 01只要有一个硬碟受损，同组RAID 0的所有硬碟都会停止运作，只剩下其他组的硬碟运作，可靠性较低。 如果以六个硬碟建RAID 01，镜射再用三个建RAID 0，那么坏一个硬碟便会有三个硬碟离线。 因此，RAID 10远较RAID 01常用，零售主机板绝大部份支援RAID 0/1/5/10，但不支援RAID 01。 &lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/RAID_10.svg/220px-RAID_10.svg.png&quot; alt=&quot;&quot;&gt;&lt;br&gt;&lt;img src=&quot;https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/RAID_01.svg/220px-RAID_01.svg.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;组成&quot;&gt;&lt;a href=&quot;#组成&quot; class=&quot;headerlink&quot; title=&quot;组成&quot;&gt;&lt;/a&gt;组成&lt;/h3&gt;&lt;p&gt;RAID的由RAID卡和磁盘对应组成。&lt;/p&gt;
+&lt;h3 id=&quot;RAID0&quot;&gt;&lt;a href=&quot;#RAID0&quot; class=&quot;headerl
+    
+    </summary>
+    
+    
+      <category term="ubuntu" scheme="http://bondlee.github.io/tags/ubuntu/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>hexo搭建博客</title>
+    <link href="http://bondlee.github.io/2016/04/26/hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/"/>
+    <id>http://bondlee.github.io/2016/04/26/hexo搭建博客/</id>
+    <published>2016-04-26T10:28:20.000Z</published>
+    <updated>2016-04-26T10:31:42.399Z</updated>
+    
+    <content type="html">&lt;h3 id=&quot;安装环境&quot;&gt;&lt;a href=&quot;#安装环境&quot; class=&quot;headerlink&quot; title=&quot;安装环境&quot;&gt;&lt;/a&gt;安装环境&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;安装node.js &lt;a href=&quot;http://nodejs.org/download/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://nodejs.org/download/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;配置Github 略&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;安装Hexo&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;npm install -g hexo
+hexo init dir
+cd dir
+npm install
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;日常运行&quot;&gt;&lt;a href=&quot;#日常运行&quot; class=&quot;headerlink&quot; title=&quot;日常运行&quot;&gt;&lt;/a&gt;日常运行&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;清理 hexo clean&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;生成静态页面 hexo generate —&amp;gt; hexo g&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;新建页面 hexo new “postname” —&amp;gt; hexo n&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;启动服务 hexo server —&amp;gt; hexo s&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;部署： hexo deploy —&amp;gt; hexo g —&amp;gt; hexo s -g&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#安装git支持
+npm install hexo-deployer-git --save
+
+# _config.yml文件中修改
+deploy:
+  type: github
+  repository: git@github.com:zhchnchn/zhchnchn.github.io.git
+  branch: master
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;配置评论&quot;&gt;&lt;a href=&quot;#配置评论&quot; class=&quot;headerlink&quot; title=&quot;配置评论&quot;&gt;&lt;/a&gt;配置评论&lt;/h3&gt;&lt;p&gt;一般主题中已经自带了多说等评论插件，只要标记自己的duoshuoID即可，例如已经使用了&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;duoshuo_shortname: bondlee
+
+fancybox: true
+
+google_analytics:
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;配置主题&quot;&gt;&lt;a href=&quot;#配置主题&quot; class=&quot;headerlink&quot; title=&quot;配置主题&quot;&gt;&lt;/a&gt;配置主题&lt;/h3&gt;&lt;p&gt;网上有很多主题可以选择，找到后复制到theme下的文件夹中,再到_config.yml中配置即可：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# Extensions
+## Plugins: https://hexo.io/plugins/
+## Themes: https://hexo.io/themes/
+theme: landfarz
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;安装rss订阅功能&quot;&gt;&lt;a href=&quot;#安装rss订阅功能&quot; class=&quot;headerlink&quot; title=&quot;安装rss订阅功能&quot;&gt;&lt;/a&gt;安装rss订阅功能&lt;/h3&gt;&lt;p&gt;首先安装&lt;br&gt;npm install hexo-generator-feed&lt;/p&gt;
+&lt;h3 id=&quot;向Google-搜索引擎提交站点&quot;&gt;&lt;a href=&quot;#向Google-搜索引擎提交站点&quot; class=&quot;headerlink&quot; title=&quot;向Google 搜索引擎提交站点&quot;&gt;&lt;/a&gt;向Google 搜索引擎提交站点&lt;/h3&gt;&lt;h4 id=&quot;注册并验证&quot;&gt;&lt;a href=&quot;#注册并验证&quot; class=&quot;headerlink&quot; title=&quot;注册并验证&quot;&gt;&lt;/a&gt;注册并验证&lt;/h4&gt;&lt;p&gt;打开验证：&lt;a href=&quot;https://www.google.com/webmasters/verification/home?hl=cn，用Google账户登录&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://www.google.com/webmasters/verification/home?hl=cn，用Google账户登录&lt;/a&gt;&lt;br&gt;添加站点地址，选择验证方法：&lt;br&gt;HTML file upload（HTML文件上传）&lt;br&gt;通用的方法，下载文件，直接放在&lt;em&gt;yourblog/themes/next/source/&lt;/em&gt;下并重新生成提交即可。&lt;/p&gt;
+&lt;h4 id=&quot;提交sitemap&quot;&gt;&lt;a href=&quot;#提交sitemap&quot; class=&quot;headerlink&quot; title=&quot;提交sitemap&quot;&gt;&lt;/a&gt;提交sitemap&lt;/h4&gt;&lt;p&gt;安装插件生成sitemap&lt;br&gt;npm install hexo-generator-sitemap –save&lt;br&gt;_config.yml&lt;br&gt;sitemap:&lt;br&gt;path: sitemap.xml&lt;br&gt;提交生成的file，可以在浏览器中打开”abc.com/sitemap.xml”看一下&lt;/p&gt;
+&lt;h4 id=&quot;提交给Google&quot;&gt;&lt;a href=&quot;#提交给Google&quot; class=&quot;headerlink&quot; title=&quot;提交给Google&quot;&gt;&lt;/a&gt;提交给Google&lt;/h4&gt;&lt;p&gt;打开&lt;a href=&quot;https://www.google.com/webmasters/tools/home?hl=zh-CN&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://www.google.com/webmasters/tools/home?hl=zh-CN&lt;/a&gt;&lt;br&gt;Sitemap（站点地图）-&amp;gt;Add-&amp;gt;填写url，提交&lt;/p&gt;
+&lt;h3 id=&quot;参考文献&quot;&gt;&lt;a href=&quot;#参考文献&quot; class=&quot;headerlink&quot; title=&quot;参考文献&quot;&gt;&lt;/a&gt;参考文献&lt;/h3&gt;&lt;p&gt;&lt;a href=&quot;http://www.cnblogs.com/zhcncn/p/4097881.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.cnblogs.com/zhcncn/p/4097881.html&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://hexo.io/zh-cn/docs/setup.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://hexo.io/zh-cn/docs/setup.html&lt;/a&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;安装环境&quot;&gt;&lt;a href=&quot;#安装环境&quot; class=&quot;headerlink&quot; title=&quot;安装环境&quot;&gt;&lt;/a&gt;安装环境&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;安装node.js &lt;a href=&quot;http://nodejs.org/download/&quot; target=&quot;
+    
+    </summary>
+    
+    
+      <category term="others" scheme="http://bondlee.github.io/tags/others/"/>
+    
+  </entry>
+  
+  <entry>
     <title>用sphinx生成python文档</title>
     <link href="http://bondlee.github.io/2016/04/24/%E7%94%A8sphinx%E7%94%9F%E6%88%90python%E6%96%87%E6%A1%A3/"/>
     <id>http://bondlee.github.io/2016/04/24/用sphinx生成python文档/</id>
     <published>2016-04-24T05:02:46.000Z</published>
-    <updated>2016-04-26T02:31:54.180Z</updated>
+    <updated>2016-04-26T10:36:18.453Z</updated>
     
     <content type="html">&lt;h2 id=&quot;Sphinx&quot;&gt;&lt;a href=&quot;#Sphinx&quot; class=&quot;headerlink&quot; title=&quot;Sphinx&quot;&gt;&lt;/a&gt;Sphinx&lt;/h2&gt;&lt;h3 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h3&gt;&lt;p&gt;我们在网上看python的文档的时候会发现很多开源项目都有相应的文档。并且这些文档都是相似的，很整洁。所有这些都是托管在&lt;a href=&quot;https://readthedocs.org/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://readthedocs.org/&lt;/a&gt;上(readthedocs可以连接到github)。&lt;/p&gt;
 &lt;h3 id=&quot;开始&quot;&gt;&lt;a href=&quot;#开始&quot; class=&quot;headerlink&quot; title=&quot;开始&quot;&gt;&lt;/a&gt;开始&lt;/h3&gt;&lt;p&gt;首选运行命令，生成doc工程&lt;br&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;sphinx-quickstart&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
@@ -110,37 +544,8 @@
     
     </summary>
     
-      <category term="default" scheme="http://bondlee.github.io/categories/default/"/>
-    
     
       <category term="python" scheme="http://bondlee.github.io/tags/python/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Hello World</title>
-    <link href="http://bondlee.github.io/2016/04/24/hello-world/"/>
-    <id>http://bondlee.github.io/2016/04/24/hello-world/</id>
-    <published>2016-04-24T04:45:22.616Z</published>
-    <updated>2016-04-24T04:45:22.634Z</updated>
-    
-    <content type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;documentation&lt;/a&gt; for more info. If you get any problems when using Hexo, you can find the answer in &lt;a href=&quot;https://hexo.io/docs/troubleshooting.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;troubleshooting&lt;/a&gt; or you can ask me on &lt;a href=&quot;https://github.com/hexojs/hexo/issues&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id=&quot;Quick-Start&quot;&gt;&lt;a href=&quot;#Quick-Start&quot; class=&quot;headerlink&quot; title=&quot;Quick Start&quot;&gt;&lt;/a&gt;Quick Start&lt;/h2&gt;&lt;h3 id=&quot;Create-a-new-post&quot;&gt;&lt;a href=&quot;#Create-a-new-post&quot; class=&quot;headerlink&quot; title=&quot;Create a new post&quot;&gt;&lt;/a&gt;Create a new post&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo new &lt;span class=&quot;string&quot;&gt;&quot;My New Post&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/writing.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Writing&lt;/a&gt;&lt;/p&gt;
-&lt;h3 id=&quot;Run-server&quot;&gt;&lt;a href=&quot;#Run-server&quot; class=&quot;headerlink&quot; title=&quot;Run server&quot;&gt;&lt;/a&gt;Run server&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo server&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/server.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Server&lt;/a&gt;&lt;/p&gt;
-&lt;h3 id=&quot;Generate-static-files&quot;&gt;&lt;a href=&quot;#Generate-static-files&quot; class=&quot;headerlink&quot; title=&quot;Generate static files&quot;&gt;&lt;/a&gt;Generate static files&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo generate&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/generating.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Generating&lt;/a&gt;&lt;/p&gt;
-&lt;h3 id=&quot;Deploy-to-remote-sites&quot;&gt;&lt;a href=&quot;#Deploy-to-remote-sites&quot; class=&quot;headerlink&quot; title=&quot;Deploy to remote sites&quot;&gt;&lt;/a&gt;Deploy to remote sites&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo deploy&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/deployment.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Deployment&lt;/a&gt;&lt;/p&gt;
-</content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.
-    
-    </summary>
-    
     
   </entry>
   

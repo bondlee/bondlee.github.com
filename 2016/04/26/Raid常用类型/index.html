@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8" />
+  
+  <title>Raid常用类型 | Bond Lee</title>
+  <meta name="author" content="Bond Lee" />
+
+  
+  <meta name="description" content="组成RAID的由RAID卡和磁盘对应组成。
+RAID0RAID 0亦称为带区集。 它将两个以上的磁盘并联起来，成为一个大容量的磁盘。 在存放数据时，分段后分散储存在这些磁盘中，因为读写时都可以并行处理，所以在所有的级别中，RAID 0的速度是最快的。 但是RAID 0既没有冗余功能，也不具备容错能力" />
+  
+
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <meta property="og:title" content="Raid常用类型" />
+  <meta property="og:site_name" content="Bond Lee" />
+
+  
+  <meta name="baidu-site-verification" content="yypp158" />
+
+  
+    <meta property="og:image" content="undefined" />
+  
+
+  
+  <link href="/css/images/favicon.ico" rel="icon" />
+  
+
+  <link rel="alternate" href="/atom.xml" title="Bond Lee" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+
+  <!-- baidu webmaster push -->
+  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Bond Lee</a></h1>
+  <h2><a href="/">In god we trust, all others bring data</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">归档</a></li>
+    
+      <li><a href="/atom.xml">订阅</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="[post]">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-04-26T10:31:23.000Z"><a href="/2016/04/26/Raid常用类型/">2016-04-26</a></time>
+      
+      
+  
+    <h1 class="title">Raid常用类型</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h3 id="组成"><a href="#组成" class="headerlink" title="组成"></a>组成</h3><p>RAID的由RAID卡和磁盘对应组成。</p>
+<h3 id="RAID0"><a href="#RAID0" class="headerlink" title="RAID0"></a>RAID0</h3><p>RAID 0亦称为带区集。 它将两个以上的磁盘并联起来，成为一个大容量的磁盘。 在存放数据时，分段后分散储存在这些磁盘中，因为读写时都可以并行处理，所以在所有的级别中，RAID 0的速度是最快的。 但是RAID 0既没有冗余功能，也不具备容错能力，如果一个磁盘（物理）损坏，所有数据都会丢失，危险程度与JBOD相当。</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/RAID_0.svg/130px-RAID_0.svg.png" alt=""></p>
+<h3 id="RAID1"><a href="#RAID1" class="headerlink" title="RAID1"></a>RAID1</h3><p>两组以上的N个磁盘相互作镜像 ，在一些<strong>多线程操作系统中</strong>能有很好的读取速度，理论上读取速度等于<strong>硬盘数量的倍数</strong>，另外写入速度有微小的降低。 只要一个磁盘正常即可维持运作，可靠性最高。 其原理为在主硬盘上存放数据的同时也在镜像硬盘上写一样的数据。 当主硬盘（物理）损坏时，镜像硬盘则代替主硬盘的工作。 因为有镜像硬盘做数据备份，所以RAID 1的数据安全性在所有的RAID级别上来说是最好的。 但无论用多少磁碟做RAID 1，仅算一个磁碟的容量，是所有RAID中磁盘利用率最低的一个级别。</p>
+<p>如果用两个不同大小的磁碟建RAID 1，可用空间为较小的那个磁碟，较大的磁碟多出来的空间也可以分割成一个区来使用，​​不会造成浪费。</p>
+<p><img src="https://upload.wikimedia.org/math/f/b/c/fbc53fafd7c6ca4f9868844d6848df29.png" alt=""></p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/RAID_1.svg/130px-RAID_1.svg.png" alt=""></p>
+<h3 id="RAID2"><a href="#RAID2" class="headerlink" title="RAID2"></a>RAID2</h3><p>这是RAID 0的改良版，以汉明码 （Hamming Code）的方式将数据进行编码后分割为独立的位元，并将数据分别写入硬盘中。 因为在数据中加入了错误修正码（ECC，Error Correction Code），所以数据整体的容量会比原始数据大一些，RAID2最少要三台磁碟机方能运作。<br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/RAID2_arch.svg/300px-RAID2_arch.svg.png" alt=""></p>
+<h3 id="RAID5"><a href="#RAID5" class="headerlink" title="RAID5"></a>RAID5</h3><p>RAID Level 5是一种储存性能、数据安全和存储成本兼顾的存储解决方案。 它使用的是Disk Striping（硬盘分割）技术。 RAID 5至少需要三块硬碟，RAID 5不是对存储的数据进行备份，而是把数据和相对应的奇偶校验信息存储到组成RAID5的各个磁盘上，并且奇偶校验信息和相对应的数据分别存储于不同的磁盘上。 当RAID5的一个磁盘数据发生损坏后，可以利用剩下的数据和相应的奇偶校验信息去恢复被损坏的数据。 RAID 5可以理解为是RAID 0和RAID 1的折衷方案。 RAID 5可以为系统提供数据安全保障，但保障程度要比镜像低而磁盘空间利用率要比镜像高。 RAID 5具有和RAID 0相近似的数据读取速度，只是因为多了一个奇偶校验信息，写入数据的速度相对单独写入一块硬盘的速度略慢，若使用「回写快取」可以让效能改善不少。 同时由于多个数据对应一个奇偶校验信息，RAID 5的磁盘空间利用率要比RAID 1高，存储成本相对较便宜。</p>
+<p><img src="https://upload.wikimedia.org/math/e/c/b/ecb2a38fa089bef7e535085a72ed6291.png" alt=""></p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/RAID_5.svg/220px-RAID_5.svg.png" alt=""></p>
+<h3 id="RAID10-01"><a href="#RAID10-01" class="headerlink" title="RAID10/01"></a>RAID10/01</h3><p>RAID 10是先镜射再分割资料，再将所有硬碟分为两组，视为是RAID 0的最低组合，然后将这两组各自视为RAID 1运作。</p>
+<p>RAID 01则是跟RAID 10的程序相反，是先分割再将资料镜射到两组硬碟。 它将所有的硬碟分为两组，变成RAID 1的最低组合，而将两组硬碟各自视为RAID 0运作。</p>
+<p>当RAID 10有一个硬碟受损，其余硬碟会继续运作。 RAID 01只要有一个硬碟受损，同组RAID 0的所有硬碟都会停止运作，只剩下其他组的硬碟运作，可靠性较低。 如果以六个硬碟建RAID 01，镜射再用三个建RAID 0，那么坏一个硬碟便会有三个硬碟离线。 因此，RAID 10远较RAID 01常用，零售主机板绝大部份支援RAID 0/1/5/10，但不支援RAID 01。 </p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/RAID_10.svg/220px-RAID_10.svg.png" alt=""><br><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/RAID_01.svg/220px-RAID_01.svg.png" alt=""></p>
+
+      
+    </div>
+    
+    <footer>
+        <div class="alignright">
+          
+          <a href="/2016/04/26/Raid常用类型/#comment" class="comment-link">评论</a>
+          
+          <a href='javascript:void(0)' class="share-link bdsharebuttonbox" data-cmd="more">分享</a>
+        </div>
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/ubuntu/">ubuntu</a>
+  </div>
+
+        <!-- partial('post/share') -->
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  <!-- 多说评论框 start -->
+  <div class="ds-thread" data-thread-key="[post]-Raid常用类型" data-title="Raid常用类型" data-url="http://bondlee.github.io/2016/04/26/Raid常用类型/"></div>
+  <!-- 多说评论框 end -->
+  <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+  <script type="text/javascript">
+  var duoshuoQuery = {short_name:'bondlee'};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+       || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+  <!-- 多说公共JS代码 end -->
+
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:bondlee.github.io">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/04/26/ElasticSearch使用初探/">ElasticSearch使用初探</a>
+      </li>
+    
+      <li>
+        <a href="/2016/04/26/Raid常用类型/">Raid常用类型</a>
+      </li>
+    
+      <li>
+        <a href="/2016/04/26/hexo搭建博客/">hexo搭建博客</a>
+      </li>
+    
+      <li>
+        <a href="/2016/04/24/用sphinx生成python文档/">用sphinx生成python文档</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/ElasticSearch/">ElasticSearch</a><small>1</small></li>
+  
+    <li><a href="/tags/others/">others</a><small>1</small></li>
+  
+    <li><a href="/tags/python/">python</a><small>1</small></li>
+  
+    <li><a href="/tags/ubuntu/">ubuntu</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/ElasticSearch/" style="font-size: 10px;">ElasticSearch</a> <a href="/tags/others/" style="font-size: 10px;">others</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/ubuntu/" style="font-size: 10px;">ubuntu</a>
+  </div>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  <p>
+  
+  &copy; 2016 Bond Lee
+  
+  All rights reserved.</p>
+  <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
+</div>
+<div class="clearfix"></div>
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script></footer>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+<div id='bg'></div>
+</body>
+</html>
