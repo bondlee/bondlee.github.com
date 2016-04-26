@@ -7,9 +7,8 @@
   <meta name="author" content="John Doe" />
 
   
-  <meta name="description" content="Sphinx简介我们在网上看python的文档的时候会发现很多开源项目都有相应的文档。并且这些文档都是相似的，很整洁。所有这些都是托管在https://readthedocs.org/上(readthedocs 可以连接到github)。
-开始首选运行命令，生成doc工程
-sphinx-quicks" />
+  <meta name="description" content="Sphinx简介我们在网上看python的文档的时候会发现很多开源项目都有相应的文档。并且这些文档都是相似的，很整洁。所有这些都是托管在https://readthedocs.org/上(readthedocs可以连接到github)。
+开始首选运行命令，生成doc工程1sphinx-quickst" />
   
 
   
@@ -77,10 +76,9 @@ sphinx-quicks" />
     </header>
     <div class="entry">
       
-        <h2 id="Sphinx"><a href="#Sphinx" class="headerlink" title="Sphinx"></a>Sphinx</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>我们在网上看python的文档的时候会发现很多开源项目都有相应的文档。并且这些文档都是相似的，很整洁。所有这些都是托管在<a href="https://readthedocs.org/上(readthedocs" target="_blank" rel="external">https://readthedocs.org/上(readthedocs</a> 可以连接到github)。</p>
-<h3 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h3><p>首选运行命令，生成doc工程</p>
-<pre><code>sphinx-quickstart
-</code></pre><ul>
+        <h2 id="Sphinx"><a href="#Sphinx" class="headerlink" title="Sphinx"></a>Sphinx</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>我们在网上看python的文档的时候会发现很多开源项目都有相应的文档。并且这些文档都是相似的，很整洁。所有这些都是托管在<a href="https://readthedocs.org/" target="_blank" rel="external">https://readthedocs.org/</a>上(readthedocs可以连接到github)。</p>
+<h3 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h3><p>首选运行命令，生成doc工程<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sphinx-quickstart</span><br></pre></td></tr></table></figure></p>
+<ul>
 <li>文档根目录(Root path for the documentation)，默认为当前目录(.)</li>
 <li>是否分离文档源代码与生成后的文档(Separate source and build directories): y</li>
 <li>模板与静态文件存放目录前缀(Name prefix for templates and static dir):_</li>
@@ -119,27 +117,18 @@ sphinx-quicks" />
    :maxdepth: 2
 
    example
-</code></pre><h3 id="conf-py"><a href="#conf-py" class="headerlink" title="conf.py"></a>conf.py</h3><p>conf.py是用于配置sphinx生成文档时使用的,使用quikstart时的问题就是全部填入cron.py中，若填问题的时候发现了不对的地方，可以在cron.py中自己修改。例如我在automode中填了no，即不会自动抽取代码中的注释生成文档。<br>    extensions = [<br>        ‘sphinx.ext.doctest’,<br>        ‘sphinx.ext.todo’,<br>        ‘sphinx.ext.coverage’,<br>        ‘sphinx.ext.pngmath’,<br>        ‘sphinx.ext.ifconfig’,<br>        ‘sphinx.ext.viewcode’,<br>    ]</p>
+</code></pre><h3 id="conf-py"><a href="#conf-py" class="headerlink" title="conf.py"></a>conf.py</h3><p>conf.py是用于配置sphinx生成文档时使用的,使用quikstart时的问题就是全部填入cron.py中，若填问题的时候发现了不对的地方，可以在cron.py中自己修改。例如我在automode中填了no，即不会自动抽取代码中的注释生成文档。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">extensions = [</span><br><span class="line">       <span class="string">'sphinx.ext.doctest'</span>,</span><br><span class="line">       <span class="string">'sphinx.ext.todo'</span>,</span><br><span class="line">       <span class="string">'sphinx.ext.coverage'</span>,</span><br><span class="line">       <span class="string">'sphinx.ext.pngmath'</span>,</span><br><span class="line">       <span class="string">'sphinx.ext.ifconfig'</span>,</span><br><span class="line">       <span class="string">'sphinx.ext.viewcode'</span>,</span><br><span class="line">   ]</span><br></pre></td></tr></table></figure>
 <p>则需要在extensions中加入sphinx.ext.autodoc</p>
-<pre><code>extensions = [
-    &apos;sphinx.ext.doctest&apos;,
-    &apos;sphinx.ext.todo&apos;,
-    &apos;sphinx.ext.coverage&apos;,
-    &apos;sphinx.ext.pngmath&apos;,
-    &apos;sphinx.ext.ifconfig&apos;,
-    &apos;sphinx.ext.viewcode&apos;,
-    &apos;sphinx.ext.autodoc&apos;,
-]
-</code></pre><h3 id="Sphinx-apidoc生成文档"><a href="#Sphinx-apidoc生成文档" class="headerlink" title="Sphinx-apidoc生成文档"></a>Sphinx-apidoc生成文档</h3><ul>
-<li><p>修改source中的conf.py文件。目的是确保python源代码所在的包在系统路径中可以找到。<br>将</p>
-<pre><code>#sys.path.insert(0,os.path.abspath(&apos;.&apos;))
-改为,并去掉注释
-sys.path.insert(0,os.path.abspath(&apos;..&apos;))
-</code></pre></li>
-<li><p>生成rst文件,outputdir是source的目录，packagedir是代码所在的目录</p>
-<pre><code>sphinx-apidoc -o outputdir packagedir
-</code></pre></li>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">extensions = [</span><br><span class="line">    <span class="string">'sphinx.ext.doctest'</span>,</span><br><span class="line">    <span class="string">'sphinx.ext.todo'</span>,</span><br><span class="line">    <span class="string">'sphinx.ext.coverage'</span>,</span><br><span class="line">    <span class="string">'sphinx.ext.pngmath'</span>,</span><br><span class="line">    <span class="string">'sphinx.ext.ifconfig'</span>,</span><br><span class="line">    <span class="string">'sphinx.ext.viewcode'</span>,</span><br><span class="line">    <span class="string">'sphinx.ext.autodoc'</span>,</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h3 id="Sphinx-apidoc生成文档"><a href="#Sphinx-apidoc生成文档" class="headerlink" title="Sphinx-apidoc生成文档"></a>Sphinx-apidoc生成文档</h3><ul>
+<li>修改source中的conf.py文件。目的是确保python源代码所在的包在系统路径中可以找到。<br>将</li>
 </ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#sys.path.insert(0,os.path.abspath('.'))</span></span><br><span class="line">改为,并去掉注释</span><br><span class="line">sys.path.insert(<span class="number">0</span>,os.path.abspath(<span class="string">'..'</span>))</span><br></pre></td></tr></table></figure>
+<ul>
+<li>生成rst文件,outputdir是source的目录，packagedir是代码所在的目录</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sphinx-apidoc -o outputdir packagedir</span><br></pre></td></tr></table></figure>
 <p>sphinx-apidoc的<a href="http://www.sphinx-doc.org/en/stable/man/sphinx-apidoc.html" target="_blank" rel="external">参数</a>：</p>
 <ul>
 <li>-o <outputdir> rst输出文件夹</outputdir></li>
@@ -160,14 +149,13 @@ sys.path.insert(0,os.path.abspath(&apos;..&apos;))
 </ul>
 <p>其中：</p>
 <ul>
-<li><p>生成rst文件后，就可以生成html文件了。进入到source目录下，运行：</p>
-<pre><code>sphinx-build -b html sourcedir outputdir
-</code></pre><p>会在source目录下生成outputdir文件夹，并且生成的html文件都在outputdir文件夹内。</p>
+<li>生成rst文件后，就可以生成html文件了。进入到source目录下，运行：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sphinx-build -b html sourcedir outputdir</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
+<p>会在source目录下生成outputdir文件夹，并且生成的html文件都在outputdir文件夹内。</p>
 <p>在quik-start中生成的目录，以上命令都可以被make命令替代：</p>
-<pre><code>make html
-</code></pre><h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><p>生成html后就可以使用了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make html</span><br></pre></td></tr></table></figure>
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><p>生成html后就可以使用了。</p>
 
       
     </div>
