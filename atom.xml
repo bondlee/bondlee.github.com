@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://bondlee.github.io/"/>
-  <updated>2016-04-28T02:05:11.493Z</updated>
+  <updated>2016-04-28T02:06:58.047Z</updated>
   <id>http://bondlee.github.io/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://bondlee.github.io/2016/04/28/matplot%E7%BB%98%E5%9B%BE%E6%8C%87%E5%8D%97/"/>
     <id>http://bondlee.github.io/2016/04/28/matplot绘图指南/</id>
     <published>2016-04-28T02:04:12.000Z</published>
-    <updated>2016-04-28T02:05:11.493Z</updated>
+    <updated>2016-04-28T02:06:58.047Z</updated>
     
     <content type="html">&lt;p&gt;matplot绘图主要的对象有pyplot，figure，axes三种对象。分别对应画布总体对象，画布和轴。&lt;/p&gt;
 &lt;h3 id=&quot;concept&quot;&gt;&lt;a href=&quot;#concept&quot; class=&quot;headerlink&quot; title=&quot;concept&quot;&gt;&lt;/a&gt;concept&lt;/h3&gt;&lt;ul&gt;
@@ -217,11 +217,10 @@ ytick.labelsize : 16
             autopct=&amp;apos;%1.1f%%&amp;apos;, shadow=True, startangle=90)
     # 长宽比例相等，这样形成的图就是一个正圆
     plt.axis(&amp;apos;equal&amp;apos;)
-    plt.suptitle(u&amp;quot;杭州大厦&amp;quot;, fontsize=14)
+    plt.suptitle(u&amp;quot;xx大厦&amp;quot;, fontsize=14)
 
     plt.show()
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img src=&quot;http://i.imgur.com/DJuwe8Q.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
-&lt;p&gt;pie的相关参数如下：&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;pie的相关参数如下：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;explode: 默认各个扇形不分离，若数组中的数大于0，则表示偏离&lt;/li&gt;
 &lt;li&gt;colors: 每个色块的颜色&lt;/li&gt;
