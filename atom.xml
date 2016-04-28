@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://bondlee.github.io/"/>
-  <updated>2016-04-26T10:40:44.029Z</updated>
+  <updated>2016-04-28T02:05:11.493Z</updated>
   <id>http://bondlee.github.io/</id>
   
   <author>
@@ -14,6 +14,323 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>matplot绘图指南</title>
+    <link href="http://bondlee.github.io/2016/04/28/matplot%E7%BB%98%E5%9B%BE%E6%8C%87%E5%8D%97/"/>
+    <id>http://bondlee.github.io/2016/04/28/matplot绘图指南/</id>
+    <published>2016-04-28T02:04:12.000Z</published>
+    <updated>2016-04-28T02:05:11.493Z</updated>
+    
+    <content type="html">&lt;p&gt;matplot绘图主要的对象有pyplot，figure，axes三种对象。分别对应画布总体对象，画布和轴。&lt;/p&gt;
+&lt;h3 id=&quot;concept&quot;&gt;&lt;a href=&quot;#concept&quot; class=&quot;headerlink&quot; title=&quot;concept&quot;&gt;&lt;/a&gt;concept&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;Figure Figure对象可以包含一个或者多个Axes&lt;/li&gt;
+&lt;li&gt;Axes 每个Axes对象都是一个拥有自己坐标系统的绘图区域&lt;/li&gt;
+&lt;li&gt;Axis Axis为坐标轴，&lt;/li&gt;
+&lt;li&gt;patches&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;pyplot&quot;&gt;&lt;a href=&quot;#pyplot&quot; class=&quot;headerlink&quot; title=&quot;pyplot&quot;&gt;&lt;/a&gt;pyplot&lt;/h3&gt;&lt;p&gt;pyplot是matplot的基本绘图对象，pyplot是有状态的，因此，每次对pyplot的设置，都会被记录到它的状态中。&lt;/p&gt;
+&lt;h4 id=&quot;折线图&quot;&gt;&lt;a href=&quot;#折线图&quot; class=&quot;headerlink&quot; title=&quot;折线图&quot;&gt;&lt;/a&gt;折线图&lt;/h4&gt;&lt;p&gt;折线图一般使用plt.plot()函数进行绘制。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import matplotlib.pyplot as plt
+import numpy as np
+
+if __name__ == &amp;apos;__main__&amp;apos;:
+    x = np.arange(0, 5, 0.2)  # 输入数据
+    line = plt.plot(x, x, &amp;apos;r--&amp;apos;, x, x**2, &amp;apos;bs&amp;apos;, x, x**3, &amp;apos;g^&amp;apos;)  # 在同一个图中画三条curve
+    plt.title(&amp;quot;plot tutor&amp;quot;)   # 图的描述
+    plt.axis([0, 5, 0, 20])  # x轴和y轴的范围
+    plt.xlabel(&amp;quot;order of numbers&amp;quot;)  # x轴的描述
+    plt.ylabel(&amp;quot;numbers&amp;quot;)  # y轴的描述
+    plt.show()
+    pass
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&quot;直方图&quot;&gt;&lt;a href=&quot;#直方图&quot; class=&quot;headerlink&quot; title=&quot;直方图&quot;&gt;&lt;/a&gt;直方图&lt;/h4&gt;&lt;p&gt;直方图可以使用plt.hist() 进行画图，代码及效果如下：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;def plot_hist():
+    mu, sigma = 100, 15
+    x = mu + sigma * np.random.randn(10000)
+
+    # the histogram of the data
+    n, bins, patches = plt.hist(x, 50, normed=1, facecolor=&amp;apos;b&amp;apos;, alpha=0.75)
+
+    plt.xlabel(&amp;apos;Smart&amp;apos;)
+    plt.ylabel(&amp;apos;Probability&amp;apos;)
+    plt.title(&amp;apos;Histogram of IQ&amp;apos;)
+    plt.text(60, .025, r&amp;apos;$\mu=100, \ \sigma=15$&amp;apos;) # 信息标注
+    plt.axis([40, 160, 0, 0.03])
+    plt.grid(True)  # 是否显示网格
+    plt.annotate(&amp;apos;max y&amp;apos;, xy=(100, 0.025), xytext=(120, 0.028),
+                 arrowprops=dict(facecolor=&amp;apos;black&amp;apos;, shrink=0.05),)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img src=&quot;http://i.imgur.com/jn4TCDd.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;对应的参数如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;x : (n,) 数组&lt;/li&gt;
+&lt;li&gt;bins : integer or array_like, 箱数&lt;/li&gt;
+&lt;li&gt;range : tuple, optional,(x.min(), x.max()) default: None 最大最小值&lt;/li&gt;
+&lt;li&gt;normed : boolean, optional, default: False 符合正态分布&lt;/li&gt;
+&lt;li&gt;weights : array_like, shape (n, ), optional, 权重，与x数组相同&lt;/li&gt;
+&lt;li&gt;cumulative : boolean, optional, default 是否累加 &lt;/li&gt;
+&lt;li&gt;bottom : array_like, scalar, or None, default: None，默认为0，底部为0 &lt;/li&gt;
+&lt;li&gt;histtype : [‘bar’ | ‘barstacked’ | ‘step’ | ‘stepfilled’], 直方图的类型&lt;br&gt; 1.‘bar’ 条状图 &lt;ol&gt;
+&lt;li&gt;‘barstacked’  &lt;/li&gt;
+&lt;li&gt;step 波浪状图&lt;/li&gt;
+&lt;li&gt;stepfilled 填充的波浪状图&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ol&gt;
+&lt;li&gt;align : [‘left’ | ‘mid’ | ‘right’], optional, default: ‘mid’ 对齐&lt;ol&gt;
+&lt;li&gt;‘left’: 与数字左对齐.&lt;/li&gt;
+&lt;li&gt;‘mid’: 中间对齐.&lt;/li&gt;
+&lt;li&gt;‘right’: 右对齐.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;orientation : [‘horizontal’ | ‘vertical’], optional，默认垂直&lt;/li&gt;
+&lt;li&gt;rwidth : scalar, optional, default: None 默认计算bar的宽度 &lt;/li&gt;
+&lt;li&gt;log : boolean, optional, default log形式 &lt;/li&gt;
+&lt;li&gt;color : color or array_like of colors, optional, default: None 颜色 &lt;/li&gt;
+&lt;li&gt;label : string, optional, default: 每个桶打上label？&lt;/li&gt;
+&lt;li&gt;stacked : boolean, optional, default 多维数据使用&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;折线的属性&quot;&gt;&lt;a href=&quot;#折线的属性&quot; class=&quot;headerlink&quot; title=&quot;折线的属性&quot;&gt;&lt;/a&gt;折线的属性&lt;/h4&gt;&lt;p&gt;setp方法用于设置折线的属性，当然也可以直接在plt.plot中设置折现的属性。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;plt.plot(x, y, linewidth=2.0)
+# or
+
+lines = plt.plot(x1, y1, x2, y2)  #返回绘制的两条折现，也可以使用line1，line2对序列进行解包
+# use keyword args
+plt.setp(lines, color=&amp;apos;r&amp;apos;, linewidth=2.0)  #设置折线的宽度
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&quot;样式&quot;&gt;&lt;a href=&quot;#样式&quot; class=&quot;headerlink&quot; title=&quot;样式&quot;&gt;&lt;/a&gt;样式&lt;/h4&gt;&lt;p&gt;matplot中自带了图标的样式，常用的图标样式例如R风格为”ggplot”,调用图表的风格可以使用如下代码：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import matplotlib.pyplot as plt
+plt.style.use(&amp;apos;ggplot&amp;apos;)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;查看已有的风格：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;print plt.style.available
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;可以在matplot中的风格路径下，自定义自己的画图风格（命名+.mplstyle)：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;~/.matplotlib/stylelib/presentation.mplstyle
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;内部可定义如下分割：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;axes.titlesize : 24
+axes.labelsize : 20
+lines.linewidth : 3
+lines.markersize : 10
+xtick.labelsize : 16
+ytick.labelsize : 16
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;最后当然可以同时使用多个主题，但如果键值冲突的话，后引用的会覆盖前面的。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;plt.style.use([&amp;apos;dark_background&amp;apos;, &amp;apos;presentation&amp;apos;])
+&lt;/code&gt;&lt;/pre&gt;&lt;h5 id=&quot;线条&quot;&gt;&lt;a href=&quot;#线条&quot; class=&quot;headerlink&quot; title=&quot;线条&quot;&gt;&lt;/a&gt;线条&lt;/h5&gt;&lt;p&gt;关于线条方面的设置，可以查看&lt;a href=&quot;http://matplotlib.org/1.4.0/api/lines_api.html#matplotlib.lines.Line2D&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;matplot线条帮助文档&lt;/a&gt;&lt;/p&gt;
+&lt;h5 id=&quot;颜色&quot;&gt;&lt;a href=&quot;#颜色&quot; class=&quot;headerlink&quot; title=&quot;颜色&quot;&gt;&lt;/a&gt;颜色&lt;/h5&gt;&lt;p&gt;在涉及文字的地方均可以设置字体和对应的颜色，颜色的key为&lt;strong&gt;color&lt;/strong&gt;，其中颜色可以指定为如下几种形式&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;灰度等级&lt;/li&gt;
+&lt;li&gt;&lt;ul&gt;
+&lt;li&gt;0.75 (0~1.0)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;纯色&lt;ul&gt;
+&lt;li&gt;b : blue&lt;/li&gt;
+&lt;li&gt;g : green&lt;/li&gt;
+&lt;li&gt;r : red&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;16进制颜色：&lt;ul&gt;
+&lt;li&gt;#eeefff&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;RGB三元组颜色：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;（0.0, 0.0, 0.0）&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;plt.xlabel(u&amp;quot;输入变量&amp;quot;, fontsize=14, color=&amp;apos;blue&amp;apos;)  # x轴的描述
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&quot;透明度&quot;&gt;&lt;a href=&quot;#透明度&quot; class=&quot;headerlink&quot; title=&quot;透明度&quot;&gt;&lt;/a&gt;透明度&lt;/h5&gt;&lt;p&gt;透明度可以用key为alpha的字段指定，其值范围为0~1&lt;/p&gt;
+&lt;h4 id=&quot;信息标注&quot;&gt;&lt;a href=&quot;#信息标注&quot; class=&quot;headerlink&quot; title=&quot;信息标注&quot;&gt;&lt;/a&gt;信息标注&lt;/h4&gt;&lt;p&gt;信息标注，可以实现图中填写各种各样的文字信息，信息标注可以引入latex中的数学表达式，功能非常强大。标注函数中的kwargs对应的配置可参考附录中的信息&lt;/p&gt;
+&lt;h5 id=&quot;标注x轴-xlabel&quot;&gt;&lt;a href=&quot;#标注x轴-xlabel&quot; class=&quot;headerlink&quot; title=&quot;标注x轴 xlabel()&quot;&gt;&lt;/a&gt;标注x轴 xlabel()&lt;/h5&gt;&lt;p&gt;函数原型为matplotlib.pyplot.xlabel(s, &lt;em&gt;args, *&lt;/em&gt;kwargs)，&lt;br&gt;对应的参数有如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;‘fontsize’            : ‘small’,&lt;/li&gt;
+&lt;li&gt;‘verticalalignment’   : ‘top’,&lt;/li&gt;
+&lt;li&gt;‘horizontalalignment’ : ‘center’&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&quot;标注y轴-ylabel&quot;&gt;&lt;a href=&quot;#标注y轴-ylabel&quot; class=&quot;headerlink&quot; title=&quot;标注y轴 ylabel()&quot;&gt;&lt;/a&gt;标注y轴 ylabel()&lt;/h5&gt;&lt;p&gt;函数原型为matplotlib.pyplot.ylabel(s, &lt;em&gt;args, *&lt;/em&gt;kwargs) &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;‘fontsize’            : ‘small’,&lt;/li&gt;
+&lt;li&gt;‘verticalalignment’   : ‘center’,&lt;/li&gt;
+&lt;li&gt;‘horizontalalignment’ : ‘right’,&lt;/li&gt;
+&lt;li&gt;‘rotation’=’vertical’ : &lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&quot;标题-title&quot;&gt;&lt;a href=&quot;#标题-title&quot; class=&quot;headerlink&quot; title=&quot;标题 title()&quot;&gt;&lt;/a&gt;标题 title()&lt;/h5&gt;&lt;p&gt;函数原型为matplotlib.pyplot.title(s, &lt;em&gt;args, *&lt;/em&gt;kwargs)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;s : str&lt;/li&gt;
+&lt;li&gt;fontdict : dict&lt;ul&gt;
+&lt;li&gt;‘fontsize’&lt;/li&gt;
+&lt;li&gt;“fontweight’ : rcParams[‘axes.titleweight’], &lt;/li&gt;
+&lt;li&gt;‘verticalalignment’: ‘baseline’,&lt;/li&gt;
+&lt;li&gt;‘horizontalalignment’: loc&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;loc : {‘center’, ‘left’, ‘right’}&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h5 id=&quot;大标题-suptitle&quot;&gt;&lt;a href=&quot;#大标题-suptitle&quot; class=&quot;headerlink&quot; title=&quot;大标题 suptitle()&quot;&gt;&lt;/a&gt;大标题 suptitle()&lt;/h5&gt;&lt;p&gt;函数原型为matplotlib.pyplot.suptitle(&lt;em&gt;args, *&lt;/em&gt;kwargs)，几个默认参数如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;x : 0.5&lt;/li&gt;
+&lt;li&gt;y : 0.98&lt;/li&gt;
+&lt;li&gt;horizontalalignment : ‘center’&lt;/li&gt;
+&lt;li&gt;verticalalignment : ‘top’&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;例：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;fig.suptitle(&amp;apos;bold figure suptitle&amp;apos;, fontsize=14, fontweight=&amp;apos;bold&amp;apos;)
+&lt;/code&gt;&lt;/pre&gt;&lt;h5 id=&quot;标注箭头-annotate&quot;&gt;&lt;a href=&quot;#标注箭头-annotate&quot; class=&quot;headerlink&quot; title=&quot;标注箭头 annotate()&quot;&gt;&lt;/a&gt;标注箭头 annotate()&lt;/h5&gt;&lt;p&gt;annotate可以在图中标注一部分关键的点，并以箭头的方式指出。函数原型为matplotlib.pyplot.annotate(&lt;em&gt;args, *&lt;/em&gt;kwargs)，几个默认参数如下：&lt;/p&gt;
+&lt;p&gt;s : 标注文字&lt;br&gt;xy : (x, y) 指向的点坐标&lt;br&gt;xytext : (x, y) 文字的坐标点 &lt;/p&gt;
+&lt;p&gt;xycoords : 点坐标的类型？ default: “data” Examples: “figure points”, “figure pixels”, “figure fraction”, “axes points”,&lt;/p&gt;
+&lt;p&gt;textcoords : 文字坐标点的类型，Examples: “figure points”, “figure pixels”, “figure fraction”, “axes points”.&lt;/p&gt;
+&lt;p&gt;arrowprops : line2D，箭头线条的类型，常用方法：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;arrowprops=dict(facecolor=&amp;apos;black&amp;apos;, shrink=0.05)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;详细可参考&lt;a href=&quot;http://matplotlib.org/1.4.0/api/text_api.html#matplotlib.text.Annotation&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;文档&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;例：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ax.annotate(&amp;apos;annotate&amp;apos;, xy=(2, 1), xytext=(3, 4),
+        arrowprops=dict(facecolor=&amp;apos;black&amp;apos;, shrink=0.05))
+&lt;/code&gt;&lt;/pre&gt;&lt;h5 id=&quot;标注任意位置text&quot;&gt;&lt;a href=&quot;#标注任意位置text&quot; class=&quot;headerlink&quot; title=&quot;标注任意位置text()&quot;&gt;&lt;/a&gt;标注任意位置text()&lt;/h5&gt;&lt;p&gt;matplotlib.pyplot.text(x, y, s, fontdict=None, withdash=False, **kwargs)用于标注任意一个位置，参数意义如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;x,y: 标注的坐标位置&lt;/li&gt;
+&lt;li&gt;s: 标注内容&lt;/li&gt;
+&lt;li&gt;fontdict： 字体内容，一般定义在matplot中rcParams配置文件中&lt;ul&gt;
+&lt;li&gt;fontsize&lt;/li&gt;
+&lt;li&gt;fontweight&lt;/li&gt;
+&lt;li&gt;verticalalignment：垂直对齐 “baseline”,”center”&lt;/li&gt;
+&lt;li&gt;horizontalalignment: 水平对齐 “loc”, “center”&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;withdash: 是否使用虚线框&lt;/li&gt;
+&lt;li&gt;**kwargs：&lt;ul&gt;
+&lt;li&gt;fontsize&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;text可以被一个矩形包裹，使用方法如下：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ax.text(3, 8, &amp;apos;boxed italics text in data coords&amp;apos;, style=&amp;apos;italic&amp;apos;,
+   bbox={&amp;apos;facecolor&amp;apos;:&amp;apos;red&amp;apos;, &amp;apos;alpha&amp;apos;:0.5, &amp;apos;pad&amp;apos;:10})
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;所有的图最后可以展示如下：&lt;br&gt;&lt;img src=&quot;http://i.imgur.com/bkC1gmk.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;饼图&quot;&gt;&lt;a href=&quot;#饼图&quot; class=&quot;headerlink&quot; title=&quot;饼图&quot;&gt;&lt;/a&gt;饼图&lt;/h4&gt;&lt;p&gt;饼图可以使用plt.pie制作。运行下面代码可以得到一个饼图，饼图的&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;def plot_pie():
+    # The slices will be ordered and plotted counter-clockwise.
+    labels = &amp;apos;Frogs&amp;apos;, &amp;apos;Hogs&amp;apos;, &amp;apos;Dogs&amp;apos;, &amp;apos;Logs&amp;apos;
+    sizes = [15, 30, 45, 10]
+    colors = [&amp;apos;yellowgreen&amp;apos;, &amp;apos;gold&amp;apos;, &amp;apos;lightskyblue&amp;apos;, &amp;apos;lightcoral&amp;apos;]
+
+    plt.pie(sizes, labels=labels, colors=colors,
+            autopct=&amp;apos;%1.1f%%&amp;apos;, shadow=True, startangle=90)
+    # 长宽比例相等，这样形成的图就是一个正圆
+    plt.axis(&amp;apos;equal&amp;apos;)
+    plt.suptitle(u&amp;quot;杭州大厦&amp;quot;, fontsize=14)
+
+    plt.show()
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img src=&quot;http://i.imgur.com/DJuwe8Q.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;pie的相关参数如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;explode: 默认各个扇形不分离，若数组中的数大于0，则表示偏离&lt;/li&gt;
+&lt;li&gt;colors: 每个色块的颜色&lt;/li&gt;
+&lt;li&gt;labels: 每个色块的标签&lt;/li&gt;
+&lt;li&gt;autopct: [ None | format string | format function ]，每个色块的数值，可以是函数，也可以是格式化字符串。字符串使用%字符串格式，格式化字符串有些类似C语言的格式化字符串&lt;/li&gt;
+&lt;li&gt;pctdistance: scalar，20%对应的距离色块中心的距离，默认为0.6&lt;/li&gt;
+&lt;li&gt;labeldistance: scalar&lt;/li&gt;
+&lt;li&gt;The radial distance at which the pie labels are drawn&lt;/li&gt;
+&lt;li&gt;shadow: [ False | True ]，是否有阴影&lt;/li&gt;
+&lt;li&gt;startangle: [ None | Offset angle ] 色块的旋转&lt;/li&gt;
+&lt;li&gt;radius: [ None | scalar ] 饼图的半径，默认为1&lt;/li&gt;
+&lt;li&gt;counterclock: [ False | True ] 饼图显示比例的顺序&lt;/li&gt;
+&lt;li&gt;wedgeprops: [ None | dict of key value pairs ]&lt;ol&gt;
+&lt;li&gt;wedgeprops = { ‘linewidth’ : 3 } 用于设置wedge对象&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;textprops: [ None | dict of key value pairs ] 文字对象&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;subplot&quot;&gt;&lt;a href=&quot;#subplot&quot; class=&quot;headerlink&quot; title=&quot;subplot&quot;&gt;&lt;/a&gt;subplot&lt;/h3&gt;&lt;p&gt;subplot是用于在绘图版上绘制多张图标的函数。&lt;br&gt;subplot, numrows(行数), numcols(列数），fignum（图数），&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;plt.figure(1)
+plt.subplot(2, 1, 1)
+plt.plot(t1, f(t1), &amp;apos;bo&amp;apos;, t2, f(t2), &amp;apos;k&amp;apos;)
+
+plt.subplot(2, 1, 2)
+plt.plot(t2, np.cos(2*np.pi*t2), &amp;apos;r--&amp;apos;)
+plt.show()
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;附录&quot;&gt;&lt;a href=&quot;#附录&quot; class=&quot;headerlink&quot; title=&quot;附录&quot;&gt;&lt;/a&gt;附录&lt;/h3&gt;&lt;h4 id=&quot;字体知识&quot;&gt;&lt;a href=&quot;#字体知识&quot; class=&quot;headerlink&quot; title=&quot;字体知识&quot;&gt;&lt;/a&gt;字体知识&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;在字体排印学里，衬线指的是字母结构笔画之外的装饰性笔画。有衬线的字体叫&lt;strong&gt;衬线体(serif)&lt;/strong&gt;;没有衬线的字体，则叫做&lt;strong&gt;无衬线体(sans-serif)&lt;/strong&gt;，无衬字体往往拥有相同的曲率，笔直的线条，锐利的转角。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&quot;中文支持&quot;&gt;&lt;a href=&quot;#中文支持&quot; class=&quot;headerlink&quot; title=&quot;中文支持&quot;&gt;&lt;/a&gt;中文支持&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;修改matplotlibrc配置文件，在文件中找到如下两行，添加微软雅黑并去掉二者面前的注释&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;#font.family         : sans-serif
+#font.sans-serif      : Microsoft Yahei,Bitstream Vera Sans, Lucida Grande, Verdana, Geneva, Lucid, Arial, Helvetica, Avant Garde, sans-serif
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;win10上没有自带ttf格式字体文件，可以到微软官网上下载&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;把下载的字体放到\Python27\Lib\site-packages\matplotlib\mpl-data\fonts\ttf中&lt;/li&gt;
+&lt;li&gt;删除.matplotlib\下的两个字体缓存文件，运行matplot程序后会自动刷新缓存&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;重新运行自己的程序如下图，有中文的地方需要使用u’中文’标识为unicode：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;import matplotlib.pyplot as plt
+import numpy as np
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;if __name__ == &amp;apos;__main__&amp;apos;:
+    x = np.arange(0, 5, 0.2)  # 输入数据
+    line = plt.plot(x, x, &amp;apos;r--&amp;apos;, x, x**2, &amp;apos;bs&amp;apos;, x, x**3, &amp;apos;g^&amp;apos;)  # 在同一个图中画三条curve
+    plt.title(r&amp;quot;plot tutor$\sigma_i=15$&amp;quot;)   # 图的描述
+    plt.axis([0, 5, 0, 20])  # x轴和y轴的范围
+    plt.xlim(0, 5)  # x轴的范围
+    plt.ylim(0, 20)  # y轴的范围
+    plt.xlabel(u&amp;quot;输入变量&amp;quot;, fontsize=14, color=&amp;apos;blue&amp;apos;)  # x轴的描述
+    plt.ylabel(u&amp;quot;输出变量&amp;quot;, fontsize=14, color=&amp;apos;blue&amp;apos;)  # y轴的描述
+    plt.legend(u&amp;quot;x = 小时, y = 个数&amp;quot;)
+    plt.show()
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&quot;text可用配置-kwargs&quot;&gt;&lt;a href=&quot;#text可用配置-kwargs&quot; class=&quot;headerlink&quot; title=&quot;text可用配置(kwargs)&quot;&gt;&lt;/a&gt;text可用配置(kwargs)&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;alpha    0.0~1.0 透明度，越小越透明&lt;/li&gt;
+&lt;li&gt;animated    [True | False]&lt;/li&gt;
+&lt;li&gt;axes    an Axes instance&lt;/li&gt;
+&lt;li&gt;backgroundcolor    背景色&lt;/li&gt;
+&lt;li&gt;bbox    矩形框&lt;/li&gt;
+&lt;li&gt;clip_box    a matplotlib.transforms.Bbox instance&lt;/li&gt;
+&lt;li&gt;clip_on    [True | False]&lt;/li&gt;
+&lt;li&gt;clip_path    [ (Path, Transform) | Patch | None ]&lt;/li&gt;
+&lt;li&gt;color    字体颜色&lt;/li&gt;
+&lt;li&gt;contains    a callable function&lt;/li&gt;
+&lt;li&gt;family 字体&lt;/li&gt;
+&lt;li&gt;figure    figure实例对象&lt;/li&gt;
+&lt;li&gt;fontproperties or font_properties    a matplotlib.font_manager.FontProperties instance&lt;/li&gt;
+&lt;li&gt;gid    an id string&lt;/li&gt;
+&lt;li&gt;horizontalalignment or ha    [ ‘center’ | ‘right’ | ‘left’ ] 水平对齐&lt;/li&gt;
+&lt;li&gt;label    string or anything printable with ‘%s’ conversion.&lt;/li&gt;
+&lt;li&gt;linespacing    几倍行距float&lt;/li&gt;
+&lt;li&gt;lod    [True | False]&lt;/li&gt;
+&lt;li&gt;multialignment    [‘left’ | ‘right’ | ‘center’ ] 对齐&lt;/li&gt;
+&lt;li&gt;path_effects    unknown&lt;/li&gt;
+&lt;li&gt;picker    [None|float|boolean|callable]&lt;/li&gt;
+&lt;li&gt;position    (x,y)位置&lt;/li&gt;
+&lt;li&gt;rasterized    [True | False | None]&lt;/li&gt;
+&lt;li&gt;rotation    [ 旋转角度 | ‘vertical’ | ‘horizontal’ ]&lt;/li&gt;
+&lt;li&gt;rotation_mode    unknown&lt;/li&gt;
+&lt;li&gt;size or fontsize    [size in points | ‘xx-small’ | ‘x-small’ | ‘small’ | ‘medium’ | ‘large’ | ‘x-large’ | ‘xx-large’ ]字体大小&lt;/li&gt;
+&lt;li&gt;sketch_params    unknown&lt;/li&gt;
+&lt;li&gt;snap    unknown&lt;/li&gt;
+&lt;li&gt;stretch or fontstretch    [a numeric value in range 0-1000 | ‘ultra-condensed’ | ‘extra-condensed’ | ‘condensed’ | ‘semi-condensed’ | ‘normal’ | ‘semi-expanded’ | ‘expanded’ | ‘extra-expanded’ | ‘ultra-expanded’ ]&lt;/li&gt;
+&lt;li&gt;style or fontstyle    [ ‘normal’ | ‘italic’ | ‘oblique’]&lt;/li&gt;
+&lt;li&gt;text    string or anything printable with ‘%s’ conversion.&lt;/li&gt;
+&lt;li&gt;transform    Transform instance&lt;/li&gt;
+&lt;li&gt;url    a url string&lt;/li&gt;
+&lt;li&gt;variant or fontvariant    [ ‘normal’ | ‘small-caps’ ]&lt;/li&gt;
+&lt;li&gt;verticalalignment or va or ma    [ ‘center’ | ‘top’ | ‘bottom’ | ‘baseline’ ]&lt;/li&gt;
+&lt;li&gt;visible    [True | False] 是否可见&lt;/li&gt;
+&lt;li&gt;weight or fontweight    [a numeric value in range 0-1000 | ‘ultralight’ | ‘light’ | ‘normal’ | ‘regular’ | ‘book’ | ‘medium’ | ‘roman’ | ‘semibold’ | ‘demibold’ | ‘demi’ | ‘bold’ | ‘heavy’ | ‘extra bold’ | ‘black’ ]&lt;/li&gt;
+&lt;li&gt;x    float 位置&lt;/li&gt;
+&lt;li&gt;y    float 位置&lt;/li&gt;
+&lt;li&gt;zorder 所在层序号&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;matplot绘图主要的对象有pyplot，figure，axes三种对象。分别对应画布总体对象，画布和轴。&lt;/p&gt;
+&lt;h3 id=&quot;concept&quot;&gt;&lt;a href=&quot;#concept&quot; class=&quot;headerlink&quot; title=&quot;concept&quot;&gt;&lt;/a&gt;con
+    
+    </summary>
+    
+    
+      <category term="python" scheme="http://bondlee.github.io/tags/python/"/>
+    
+  </entry>
   
   <entry>
     <title>git多账号切换</title>
