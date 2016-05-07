@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://bondlee.github.io/"/>
-  <updated>2016-04-28T02:06:58.047Z</updated>
+  <updated>2016-05-07T07:15:04.700Z</updated>
   <id>http://bondlee.github.io/</id>
   
   <author>
@@ -14,6 +14,126 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>shadowsocks</title>
+    <link href="http://bondlee.github.io/2016/05/07/shadowsocks/"/>
+    <id>http://bondlee.github.io/2016/05/07/shadowsocks/</id>
+    <published>2016-05-07T06:18:42.000Z</published>
+    <updated>2016-05-07T07:15:04.700Z</updated>
+    
+    <content type="html">&lt;h3 id=&quot;VPS&quot;&gt;&lt;a href=&quot;#VPS&quot; class=&quot;headerlink&quot; title=&quot;VPS&quot;&gt;&lt;/a&gt;VPS&lt;/h3&gt;&lt;p&gt; 因为github有学生优惠，可以领一张digital ocean的100刀的优惠券，对应可以购买5刀/月的VPS。这样算下来可以用20个月，一年多，还是非常不错的。关于主机位置的选择，首选西海岸的机器。 唯一需要注意的一点是，因为cn的edu邮箱申请过多，github已经把cn对应的edu邮箱设为垃圾邮箱了。所以申请完成后会默认收到拒信，这个时候不要慌张，邮件里会提到一个人工客服的邮箱。 &lt;strong&gt;可以礼貌的写一段argue的话，告诉对方自己确实是一个学生&lt;/strong&gt;发到&lt;strong&gt;人工客服的邮箱&lt;/strong&gt;，当时我把自己的研究生证拍了张照和学校的英文网址都附在了邮件里，这样大概等了两个星期，收到了邮件给的优惠码。&lt;/p&gt;
+&lt;p&gt;优惠码里包含的东西还挺多，不仅仅有digital ocean的优惠，还有其他的东西。非常不错~&lt;/p&gt;
+&lt;h3 id=&quot;ss安装&quot;&gt;&lt;a href=&quot;#ss安装&quot; class=&quot;headerlink&quot; title=&quot;ss安装&quot;&gt;&lt;/a&gt;ss安装&lt;/h3&gt;&lt;p&gt;安装shadowsock服务端：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apt-get install python-pip
+pip install shadowsocks
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;配置服务端，创建配置文件/etc/shadowsocks.json，填入如下内容：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+    &amp;quot;server&amp;quot;:&amp;quot;my_server_ip&amp;quot;,
+    &amp;quot;server_port&amp;quot;:8388,
+    &amp;quot;local_port&amp;quot;:1080,
+    &amp;quot;password&amp;quot;:&amp;quot;mypassword&amp;quot;,
+    &amp;quot;timeout&amp;quot;:300,
+    &amp;quot;method&amp;quot;:&amp;quot;rc4-md5&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;后台启动服务端：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ssserver -c /etc/shadowsocks.json -d start
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;TIPS: 加密方式推荐使用rc4-md5，因为 RC4 比 AES 速度快好几倍，如果用在路由器上会带来显著性能提升。旧的 RC4 加密之所以不安全是因为 Shadowsocks 在每个连接上重复使用 key，没有使用 IV。现在已经重新正确实现，可以放心使用。 不过从整体上来&lt;/p&gt;
+&lt;h3 id=&quot;增加IPV6支持&quot;&gt;&lt;a href=&quot;#增加IPV6支持&quot; class=&quot;headerlink&quot; title=&quot;增加IPV6支持&quot;&gt;&lt;/a&gt;增加IPV6支持&lt;/h3&gt;&lt;p&gt;digital ocean中的主机都支持了IPV6，在现有的墙体系内，IPV6的翻墙效果要比IPV4的速度要快不少。 配置IPV6需要在服务端的config.json中的server启用支持：&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;{
+&amp;quot;server&amp;quot;:&amp;quot;::&amp;quot;,
+&amp;quot;server_port&amp;quot;:8388,
+&amp;quot;local_port&amp;quot;:10800,
+&amp;quot;password&amp;quot;:&amp;quot;*****&amp;quot;,
+&amp;quot;timeout&amp;quot;:600,
+&amp;quot;method&amp;quot;:&amp;quot;aes-256-cfb&amp;quot;
+} 
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;WIN7 以后的版本都已经默认支持了IPV6，我们学校接入的网络也已经有IPV6的支持了，所以&lt;br&gt;尝试了一下我的主机，ping的延时虽然没太大区别，但是实际上速度确实要快很多，尤其是在看youtube的时候，页面基本都能做到秒开。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ping 2604:a880:1:20::51f:4001
+
+来自 2604:a880:1:20::51f:4001 的回复: 时间=218ms
+来自 2604:a880:1:20::51f:4001 的回复: 时间=219ms
+来自 2604:a880:1:20::51f:4001 的回复: 时间=219ms
+来自 2604:a880:1:20::51f:4001 的回复: 时间=217ms
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;最后在shadowsock的客户端里填入虚拟机的IPV6地址就可以访问了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://i.imgur.com/oZbdCcM.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;h3 id=&quot;PAC语法规则&quot;&gt;&lt;a href=&quot;#PAC语法规则&quot; class=&quot;headerlink&quot; title=&quot;PAC语法规则&quot;&gt;&lt;/a&gt;PAC语法规则&lt;/h3&gt;&lt;p&gt;自己用shadowsock的时候，不少软件像slack客户端还是需要全局的翻墙环境，这个时候就需要自己添加pac规则，使用pac翻墙。PAC规则的语法还是非常清晰，基本如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;通配符支持，如 &lt;em&gt;.example.com/&lt;/em&gt; 实际书写时可省略&lt;em&gt; 如.example.com/ 意即&lt;/em&gt;.example.com/*&lt;/li&gt;
+&lt;li&gt;正则表达式支持，以\开始和结束， 如 [\w]+:\/\/example.com\&lt;/li&gt;
+&lt;li&gt;例外规则 @@，如 @@&lt;em&gt;.example.com/&lt;/em&gt; 满足@@后规则的地址不使用代理&lt;/li&gt;
+&lt;li&gt;匹配地址开始和结尾 |，如 |&lt;a href=&quot;http://example.com、example.com|分别表示以http://example.com开始和以example.com结束的地址&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://example.com、example.com|分别表示以http://example.com开始和以example.com结束的地址&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;|| 标记，如 ||example.com 则&lt;a href=&quot;http://example.com、https://example.com、ftp://example.com等地址均满足条件&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://example.com、https://example.com、ftp://example.com等地址均满足条件&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;注释 ! 如 ! Comment&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&quot;配置加速&quot;&gt;&lt;a href=&quot;#配置加速&quot; class=&quot;headerlink&quot; title=&quot;配置加速&quot;&gt;&lt;/a&gt;配置加速&lt;/h3&gt;&lt;p&gt;首先，将 Linux 内核升级到 3.5 或以上。&lt;/p&gt;
+&lt;p&gt;第一步，增加系统文件描述符的最大限数&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;vi /etc/security/limits.conf
+
+soft nofile 51200
+hard nofile 51200
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;启动shadowsocks服务器之前，设置以下参数&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ulimit -n 51200
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;第二步，调整内核参数&lt;/p&gt;
+&lt;p&gt;修改配置文件 /etc/sysctl.conf&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;fs.file-max = 51200
+
+net.core.rmem_max = 67108864
+net.core.wmem_max = 67108864
+net.core.netdev_max_backlog = 250000
+net.core.somaxconn = 4096
+
+## 我已经是IPV6环境了，设置这些IPV4的效果似乎没有体现    
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_tw_recycle = 0
+net.ipv4.tcp_fin_timeout = 30
+net.ipv4.tcp_keepalive_time = 1200
+net.ipv4.ip_local_port_range = 10000 65000
+net.ipv4.tcp_max_syn_backlog = 8192
+net.ipv4.tcp_max_tw_buckets = 5000
+net.ipv4.tcp_fastopen = 3
+net.ipv4.tcp_rmem = 4096 87380 67108864
+net.ipv4.tcp_wmem = 4096 65536 67108864
+net.ipv4.tcp_mtu_probing = 1
+net.ipv4.tcp_congestion_control = hybla
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&quot;TCP加速&quot;&gt;&lt;a href=&quot;#TCP加速&quot; class=&quot;headerlink&quot; title=&quot;TCP加速&quot;&gt;&lt;/a&gt;TCP加速&lt;/h4&gt;&lt;p&gt;锐速现在已经不提供免费账号了，网上有破解版的，但是最后安装没有成功。 IPV6后，看youtube已经能到720P无压力了，暂时先这样吧。 有锐速激活码的，求给我一个，试试看。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;锐速是一款非常不错的TCP底层加速软件，可以非常方便快速地完成服务器网络的优化，配合 ShadowSocks 效果奇佳。目前锐速官方也出了永久免费版本，适用带宽20M、3000加速连接，个人使用是足够了。如果需要，先要在锐速官网注册个账户。
+
+然后确定自己的内核是否在锐速的支持列表里，如果不在，请先更换内核，如果不确定，请使用 手动安装。
+
+确定自己的内核版本在支持列表里，就可以使用以下命令快速安装了。
+
+wget http://my.serverspeeder.com/d/ls/serverSpeederInstaller.tar.gz
+tar xzvf serverSpeederInstaller.tar.gz
+bash serverSpeederInstaller.sh
+
+输入在官网注册的账号密码进行安装，参数设置直接回车默认即可，
+最后两项输入 y 开机自动启动锐速，y 立刻启动锐速。之后可以通过lsmod查看是否有appex模块在运行。
+
+到这里还没结束，我们还要修改锐速的3个参数，vi /serverspeeder/etc/config
+
+rsc=&amp;quot;1&amp;quot; #RSC网卡驱动模式  
+advinacc=&amp;quot;1&amp;quot; #流量方向加速  
+maxmode=&amp;quot;1&amp;quot; #最大传输模式
+digitalocean vps的网卡支持rsc和gso高级算法，所以可以开启rsc=&amp;quot;1&amp;quot;，gso=&amp;quot;1&amp;quot;。
+
+重新启动锐速
+
+service serverSpeeder restart
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&quot;参考&quot;&gt;&lt;a href=&quot;#参考&quot; class=&quot;headerlink&quot; title=&quot;参考&quot;&gt;&lt;/a&gt;参考&lt;/h3&gt;&lt;p&gt;&lt;a href=&quot;http://wuchong.me/blog/2015/02/02/shadowsocks-install-and-optimize/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://wuchong.me/blog/2015/02/02/shadowsocks-install-and-optimize/&lt;/a&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;VPS&quot;&gt;&lt;a href=&quot;#VPS&quot; class=&quot;headerlink&quot; title=&quot;VPS&quot;&gt;&lt;/a&gt;VPS&lt;/h3&gt;&lt;p&gt; 因为github有学生优惠，可以领一张digital ocean的100刀的优惠券，对应可以购买5刀/月的VPS。这样算下来可以用
+    
+    </summary>
+    
+    
+      <category term="ubuntu" scheme="http://bondlee.github.io/tags/ubuntu/"/>
+    
+  </entry>
   
   <entry>
     <title>matplot绘图指南</title>
